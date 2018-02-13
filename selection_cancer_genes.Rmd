@@ -22,7 +22,7 @@ The objectives of this study are:
 
 #1. Data collection
 ## 1.1) Cancer genes
-For this study, we analyze **102 cancer genes** cancer genes with reported cases of germline mutations. We retrieved these genes from COSMIC database after filtering for germline mutations (http://cancer.sanger.ac.uk/cosmic/census/tables?name=gmuts).
+For this study, I analyze **102 cancer genes** cancer genes with reported cases of germline mutations. We retrieved these genes from COSMIC database after filtering for germline mutations (http://cancer.sanger.ac.uk/cosmic/census/tables?name=gmuts).
 
 A table with cancer genes and detailed information can be viewed in this link:
 https://docs.google.com/spreadsheets/d/1UmkyjbfW1ju0qnO4uZJw0hUMljUczLJuipcIU_byTFY/edit?usp=sharing
@@ -216,9 +216,9 @@ blastp -query ${GENEDIR}/${gene}/recblast/${HITFILE} -db ${DBDIR}/Homo_sapiens.G
 done <<< "$GENENAMES"
 ```
 
-## 2.3) Download of coding sequences from protein id. 
-We extract the IDs of ortholog proteins (those matching with the target human gene) and download protein orthologs sequences
-```{bash download_homolog_prot_seqs}
+## 2.3) Downloading sequences from protein id. 
+We extract the IDs of ortholog proteins (those matching with the target human gene).
+```{bash retrieve_ortholog_ids}
 #!/usr/bin/bash
 
 GENEDIR="/home/user/phylogenomics_lab/cancer_genes_selection/datagenes"
@@ -230,20 +230,10 @@ BLASTOUT="${GENEDIR}/${gene}/recblast/${gene}_recblast_first_hits.tsv"
 ORTHOLIST=${gene}_orthologs.txt
 
 cat ${BLASTOUT} | grep ${gene} | cut -f1 | uniq > ${GENEDIR}/${gene}/$ORTHOLIST
-
-mkdir ${GENEDIR}/${gene}/seqs
-echo 'Downloading protein sequences'
-mkdir ${GENEDIR}/${gene}/seqs/prot
-
-while read -r protid; do
-curl 'https://rest.ensembl.org/sequence/id/'$protid'?type=cds' -H 'Content-type:text/x-fasta' >> ${GENEDIR}/${gene}/seqs/prot/${gene}_prot_seqs.fas
-done < ${GENEDIR}/${gene}/${ORTHOLIST}
-done <<< "${GENENAMES}"
 ```
 
-
-For this we run the script **batch_download_cds_from_protid.sh**
-```{bash}
+Next, I download coding and protein ortholog sequences. For this we run the script ****
+```{bash download_cds-pep_from_protid}
 #!/bin/bash
 
 WORKDIR="/home/user/phylogenomics_lab/cancer_genes_selection"
@@ -264,65 +254,20 @@ protlist="${GENEDIR}/${gene}/*_orthologs.txt"
 while read -r id; do
 spcode=`echo $id | cut -c -6`
 dataset=`grep $spcode ../species_codes.txt | cut -d' ' -f2`
-echo "Downloading ortholog sequences of ${gene} from ${dataset}"
+echo "Downloading ortholog coding sequences of ${gene} from ${dataset}"
 perl ${SCRIPTDIR}/download_cds_from_protid.pl $id $dataset >> ${GENEDIR}/${gene}/seqs/cds/"${gene}_cds.fas"
+echo "Downloading ortholog peptide sequences of ${gene} from ${dataset}"
+perl ${SCRIPTDIR}/download_pep_from_protid.pl $id $dataset >> ${GENEDIR}/${gene}/seqs/pep/"${gene}_pep.fas"
 done < ${protlist}
 echo ${gene}
 done <<< "${GENENAMES}"
 ```
 
-Within this bash script we call the perl script **download_cds_from_protid.pl** which download a single sequences for a given protein id.
-```{perl}
-#!/bin/perl
-use strict;
-use BioMart::Initializer;
-use BioMart::Query;
-use BioMart::QueryRunner;
+Within this bash script we call the perl script **download_cds_from_protid.pl** and **download_pep_from_protid.pl**, which download coding and peptide sequences for a given protein id.
 
-my($USAGE) = "Incomplete number of arguments in $0\n Arguments: [1]Protein_stable_ID, [2]Ensembl_database \n\n";
+#3) Multiple alignment
 
-my $num_args = $#ARGV + 1;
-if ($num_args != 2) {
-print $USAGE;
-	exit;
-	}
-
-# Read in the Protein ID and specific Ensembl database from the argument on the command line.
-my($protid) = $ARGV[0];
-my($spdb) = $ARGV[1];
-
-my $confFile = "/home/user/perl5/biomart-perl/conf/martURLLocation.xml";
-my $action='cached';
-my $initializer = BioMart::Initializer->new('registryFile'=>$confFile, 'action'=>$action);
-my $registry = $initializer->getRegistry;
-
-my $query = BioMart::Query->new('registry'=>$registry,'virtualSchemaName'=>'default');
-
-		
-	$query->setDataset("${spdb}_gene_ensembl");
-	$query->addFilter("ensembl_peptide_id_version", [$protid]);
-	$query->addAttribute("ensembl_gene_id");
-	$query->addAttribute("ensembl_transcript_id");
-	$query->addAttribute("coding");
-	$query->addAttribute("ensembl_peptide_id");
-	$query->addAttribute("external_gene_name");
-
-$query->formatter("FASTA");
-
-my $query_runner = BioMart::QueryRunner->new();
-
-############################## GET RESULTS ##########################
-
-$query_runner->execute($query);
-$query_runner->printHeader();
-$query_runner->printResults();
-$query_runner->printFooter();
-#####################################################################
-```
-
-#3) Multiple alignments
-
-##3.1) Refinment pre-alignment
+##3.1) Refinement pre-alignment
 Once I have retrieved multiple sequence files, I remove the ambiguity sites (N) of sequences
 ```{bash remove_ambiguity_sites}
 #!/usr/bin/bash
@@ -337,5 +282,7 @@ sed '/^[^>]/s/N//g'  ${GENEDIR}/${gene}/seqs/cds/"${gene}_cds.fas" > ${GENEDIR}/
 
 done <<< "${GENENAMES}"
 ```
+
+##3.2)Sequence alignment
 
 
