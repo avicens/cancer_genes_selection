@@ -1,0 +1,227 @@
+---
+title: "Molecular adaption of cancer associated genes"
+author: "Alberto Vicens Sanchez"
+date: "February 19, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = FALSE, warning = F)
+```
+
+#Introduction 
+In this study, we will evaluate the selective pressures driving the evolution of human cancer associated genes, spanning both oncogenes and tumor supressor genes (TSG), in a phylogeny of mammals. 
+
+The objectives of this study are:
+
+* Assess selective pressures on cancer driver genes in mammals.
+* Compare selective regimes among long-lived and short-lived animals.
+* Compare selective regimes between oncogenes and TSG.
+* Compare adaptive germline variation against somatic mutations.
+
+#Species
+For this study, we will compare 37 mammalian species with well annotated genomes. Information about the species see the table:
+https://drive.google.com/file/d/1GpDmoZHW6ZdfqBQ8Bn0OPM53OfESNrkt/view?usp=sharing
+
+#Data
+## Cancer genes
+I retrieved cancer genes from the COSMIC database. A list of 574 genes classified as Tier 1 (i.e. those genes with a documented activity in cancer) was downloaded.
+https://drive.google.com/file/d/1GmpOnIMWBBgYBJZaUulY9MUOIgEO9g8I/view?usp=sharing
+
+This list contains oncogenes, tumor supresor genes (TSG) and genes involved in oncogenic fusions.
+```{r gene_classifications, eval=TRUE, fig.align='center', dpi=100, fig.width=8, fig.height=6,fig.cap="Figure 1. Venn Diagram representing the classification of genes according to their involvement in cancer (left) and tumor type (right)"}
+cancergenestable<-read.table("/home/user/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/tables/cosmic_cancer_genes.tsv",header = T,sep = "\t",na.strings = "-")
+
+#Classification 1: Role in cancer
+tsg<-cancergenestable[grep("TSG",cancergenestable$Role.in.Cancer),1]
+onc<-cancergenestable[grep("oncogene",cancergenestable$Role.in.Cancer),1]
+fus<-cancergenestable[grep("fusion",cancergenestable$Role.in.Cancer),1]
+
+epit<-cancergenestable[grep("E",cancergenestable$Tissue.Type),1]
+lymp<-cancergenestable[grep("L",cancergenestable$Tissue.Type),1]
+myel<-cancergenestable[grep("M",cancergenestable$Tissue.Type),1]
+other<-cancergenestable[grep("O",cancergenestable$Tissue.Type),1]
+
+library(venn) #Plot veen diagrams
+par(mfrow=c(1,2),mar=rep(1,4))
+
+vd1<-venn(list(onc,tsg,fus),snames=c("Oncogenes", "Tumor supressor Genes","Fusion"), ilab=T, cexil = 1, zcolor="style")
+vd2<-venn(list(epit,lymp,myel,other),snames=c("Epithelial", "Leuk/Lymph","Myeloid", "Others"), ilab=T, cexil = 1, zcolor="style")
+```
+I retrieved information for human genes using Ensembl BioMArt (see *ensemble_gene_id.tsv* file). 
+After applying a quality filter for gene annotation and transcript support level, I finally obtained 535 supported genes.
+```{bash filter_genes}
+tail -n +2 ensembl_gene_list.tsv| grep "\<tsl1\>" | grep 'GENCODE'| sort -k4,4 -k6nr,6 | sort -u -k 4,4 > ensembl_gene_uniq.tsv
+cut -f4 ensembl_gene_uniq.tsv > genenames.txt
+```
+
+To organize the data per gene, I create a working folder for each gene.
+```{bash create_gene_folders}
+#!/bin/env bash
+
+WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+DATADIR="${WORKDIR}/data"
+GENEDIR="${WORKDIR}/genes"
+
+while read gene; do
+mkdir ${GENEDIR}/$gene
+done < ${DATADIR}/genenames.txt
+```
+
+##Proteome databases
+We retrieved proteome databases for the mammalian species from Ensembl Release 91 (http://www.ensembl.org/).
+```{bash download_proteomes}
+#!usr/bin/bash
+USER="anonymous"
+PASSWD="chechu086@gmail.com"
+HOST="ftp://ftp.ensembl.org/pub/release-91/fasta"
+SPLIST="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/species_name.txt"
+DBDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/db/pep"
+
+while read name; do
+
+wget --user=${USER} --password=${PASSWD} "${HOST}/$(echo "$name" | awk '{print tolower($0)}')/pep/*.gz" -P ${DBDIR}
+done < ${SPLIST}
+```
+The proteome database of bowhead whale was downloaded from the specific database (www.bowhead-whale.org).
+
+#Orthologs search
+##Retrieving human sequencesgene
+
+I extract the Ensembl protein ID from the human protein infromation table
+```
+cut -f2 ensembl_gene_uniq.tsv > protein_ensembl_id.txt
+```
+I retrieve peptide sequences of human proteins with BioMart (see *human_pep_seqs.fasta*), then I move the retrieved human protein sequences to the respective gene folder.
+```{bash}
+#!/bin/bash
+WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+DATADIR="${WORKDIR}/data"
+GENEDIR="${WORKDIR}/genes"
+GENENAMES=`ls ${GENEDIR}`
+HUMANSEQS="${DATADIR}/human_pep_seqs_one_line.fasta"
+
+while read -r gene; do
+SEQFILE=`grep "|${gene}$" ${HUMANSEQS} | sed -e 's/^>//' -e 's/|/_/' -e 's/.*$/&.fas/'`
+grep -A1 "|${gene}$" ${HUMANSEQS} > ${GENEDIR}/${gene}/${SEQFILE}
+done <<< "${GENENAMES}"
+```
+
+##BLAST
+I merge the proteomes from all species in a single fasta file (except whale). Then I make the BLAST database.
+```{bash make_mammals_db}
+cd $LUSTRE/cancer_genes_selection/db/pep/
+gunzip *.gz
+cat *.fa > mammalian_proteomes.pep.all.fa
+
+module load gcc/5.3.0 ncbi-blast/2.2.31+
+makeblastdb -in mammalian_proteomes.pep.all.fa -dbtype prot
+```
+I run BLASTp using human proteins as queries against mammalian proteome database. I set these similarity tresholds for Blast searches: 
+  * e-value < 1e-6
+  * query coverage > 50 %
+```{bash run_blastp}
+#!/bin/env bash
+
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task 4
+#SBATCH -t 15:00:00
+#SBATCH --mem 6G
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+#SBATCH --mail-type=fail
+#SBATCH --mail-user=avicens@uvigo.es
+
+#Load modules
+module load gcc/5.3.0 ncbi-blast/2.2.31+
+
+WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+GENEDIR="${WORKDIR}/genes"
+BLASTDB="${WORKDIR}/db/pep/mammalian_proteomes.pep.all.fa"
+GENENAMES=`ls ${GENEDIR}`
+
+while read -r gene; do
+
+echo "Running blastp for $gene"
+mkdir ${GENEDIR}/${gene}/blastp
+
+        blastp -query ${GENEDIR}/${gene}/*.fas -db ${BLASTDB} -outfmt 6 -evalue$
+
+done <<< "$GENENAMES"
+```
+
+## Rerrieving sequences 
+I first extract the IDs of the best protein hits from each species.
+```{bash}
+WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+GENEDIR="${WORKDIR}/genes"
+GENENAMES=`ls ${GENEDIR}`
+
+while read -r gene; do
+echo "Retrieving orthologs IDs for ${gene}"
+BLASTOUT="${GENEDIR}/${gene}/blastp/${gene}_blastp_out.tsv"
+ORTHOLIST=${gene}_orthologs.txt
+
+awk '{s=substr($2,1,7)} {g=substr($2,8,length($2))} {print $0,s}' ${BLASTOUT} | sort -nr -k3,3 | sort --stable -k13,13 -u | cut -f2 > ${ORTHOLIST}
+done <<< "$GENENAMES"
+```
+
+I then download ortholog coding sequences from BioMart. From this step, and in order to speed up the analysis, I run the tasks in arrays.
+
+```{bash, download_ortholog_cds}
+#!/bin/bash
+
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task 4
+#SBATCH -t 00:30:00
+#SBATCH --mem 6G
+
+#Setting directories and files
+WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+DATADIR="${WORKDIR}/data"
+GENEDIR="${WORKDIR}/genes"
+DBDIR="${WORKDIR}/db/pep"
+SCRIPTDIR="${WORKDIR}/scripts"
+SPNAMES=${DATADIR}/species_codes.txt
+
+GENE=`ls ${GENEDIR} | sed "${SLURM_ARRAY_TASK_ID}q;d"`
+echo "Creating directory for coding sequences of ${GENE}"
+mkdir ${GENEDIR}/${GENE}/seqs
+mkdir ${GENEDIR}/${GENE}/seqs/cds
+protlist="${GENEDIR}/${GENE}/*_orthologs.txt"
+
+#Load PERL module
+module load perl/5.24.0
+#Set path to Biomart modules
+export PERL5LIB=$PERL5LIB:/home/uvi/be/avs/tools/biomart-perl/lib/:/home/uvi/be/avs/tools/biomart-perl/perl_modules/
+
+while read -r id; do
+spcode=`echo $id | cut -c -6`
+dataset=`grep $spcode ${SPNAMES} | cut -d' ' -f2`
+echo "Downloading ortholog coding sequences of ${GENE} from ${dataset}"
+perl ${SCRIPTDIR}/download_cds_from_protid.pl $id $dataset >> ${GENEDIR}/${GENE}/seqs/cds/"${GENE}_cds.fas"
+done < ${protlist}
+```
+
+
+Due to different sequence annotation, I extract whale sequences separately.
+```{bash whale_blast}
+#!/bin/bash
+WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+WHALEDIR="${WORKDIR}/whale"
+
+unzip ${WHALEDIR}/bowhead_whale_proteins.zip
+
+#Load blast module
+module load gcc/5.3.0 ncbi-blast/2.2.31+
+
+#Make Blast database
+makeblastdb -in  ${WHALEDIR}/bowhead_whale_proteins.fasta -dbtype prot
+
+#Run blastp
+blastp -query ${DATADIR}/human_pep_seqs.fasta -db ${WHALEDIR}/bowhead_whale_proteins.fasta -evalue 1e-6 -qcov_hsp_perc 50 -max_target_seqs 1 -outfmt 6 -out ${WHALEDIR}/bowhead_whale_blastp_out.tsv
+```
+
+
