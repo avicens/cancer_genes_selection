@@ -22,10 +22,8 @@ The first column of the cancer genes dataset, which contains the gene names, was
 
 In this step, and in order to apply the later analysis per gene, a working folder was created for each gene with the bash script **create_gene_folders.sh**.
 
-The Ensembl protein ID column was extracted from the *ensembl_gene_uniq.tsv* table, getting the **protein_ensembl_id.txt** file.
-```
-cut -f2 ensembl_gene_uniq.tsv > protein_ensembl_id.txt
-```
+The Ensembl_protein_ID column was extracted from the *ensembl_gene_uniq.tsv* table, getting the **protein_ensembl_id.txt** file.
 
-I use the BiomaRt library implemented in R to get orthologues for all genes and from all species. 
+## Retrieving gene orthologs from mammalian genomes
+For getting orthologues from a list of mammalian genomes, I used the BiomaRt library implemented in R. The R script **get_orthologues_biomart.R** was written to perform the retrieving task.
 
