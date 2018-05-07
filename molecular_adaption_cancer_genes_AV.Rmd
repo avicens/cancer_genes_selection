@@ -17,10 +17,10 @@ The objectives of this study are:
 * Assess selective pressures on cancer driver genes in mammals.
 * Compare selective regimes between different functional categories of cancer genes.
 * Compare germline evolution against somatic variation.
-* Identify episodes of positive seleciton on cancer genes across mamalian species.
+* Identify episodes of positive selection on cancer genes across mamalian species.
 
 #Species
-For this study, we will compare 32 mammalian species with well annotated genomes. Information about the species see the table:
+For this study, we compared 32 mammalian species with well annotated genomes. Information about the species see the table:
 https://drive.google.com/file/d/1GpDmoZHW6ZdfqBQ8Bn0OPM53OfESNrkt/view?usp=sharing
 
 #Data
@@ -69,10 +69,9 @@ cut -f4 ensembl_gene_uniq.tsv > genenames.txt
 ```
 
 The following genes did not pass the supporting filters and were discarded from the analysis:
-
 *ACKR3,AFF3,CEBPA,FANCF,FAT1,FOXL2,HIST1H3B,HIST1H4I,HLA-A,HOXD11,HOXD13,IRS4,JAK1,JUN,KMT2D,MTCP1,NUTM2B,PIK3CA,POT1,SMAD4,SOX2,TAL2*
 
-To organize the data per gene, I create a working folder for each gene with the *crete_gene_folders.sh* script.
+To organize the data per gene, I create a working folder for each gene with the *create_gene_folders.sh* script.
 ```{bash create_gene_folders}
 #!/bin/env bash
 
@@ -83,22 +82,6 @@ GENEDIR="${WORKDIR}/genes"
 while read gene; do
 mkdir ${GENEDIR}/$gene
 done < ${DATADIR}/genenames.txt
-```
-
-##Proteome databases
-We retrieved proteome databases for the mammalian species from Ensembl Release 91 (http://www.ensembl.org/).
-```{bash download_proteomes}
-#!usr/bin/bash
-USER="anonymous"
-PASSWD="chechu086@gmail.com"
-HOST="ftp://ftp.ensembl.org/pub/release-91/fasta"
-SPLIST="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/species_name.txt"
-DBDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/db/pep"
-
-while read name; do
-
-wget --user=${USER} --password=${PASSWD} "${HOST}/$(echo "$name" | awk '{print tolower($0)}')/pep/*.gz" -P ${DBDIR}
-done < ${SPLIST}
 ```
 
 #Retrieving Orthologs
