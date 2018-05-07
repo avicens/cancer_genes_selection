@@ -24,6 +24,8 @@ In this step, and in order to apply the later analysis per gene, a working folde
 
 The Ensembl_protein_ID column was extracted from the *ensembl_gene_uniq.tsv* table, getting the **protein_ensembl_id.txt** file.
 
-## Retrieving gene orthologs from mammalian genomes
-For getting orthologues from a list of mammalian genomes, I used the BiomaRt library implemented in R. The R script **get_orthologues_biomart.R** was written to perform the retrieving task.
+## Collecting gene orthologs from mammalian genomes
+For getting orthologues from a list of 32 mammalian genomes (see Table S2 of the manuscript), I used the BiomaRt library implemented in R. The R script **get_orthologues_biomart.R** was written to perform this task.
+Ortholog coding sequences from all species for each gene were downloaded with BioMart Perl API. For this task, I wrote the **download_ortholog_cds_array.sh** script that call to the **download_cds_from_protid.pl** perl script iteratively for each gene.
+
 
