@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE, eval = FALSE, warning = F,cache = T, comment = F,  cache.path="/home/user/phylogenomics_lab/cancer_genes_selection/cache/",autodep=T, fig.path="/home/user/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/figures/")
 ```
 
-#Introduction 
+# Introduction 
 In this study, we will evaluate the selective pressures driving the evolution of human cancer associated genes, spanning both oncogenes and tumor supressor genes (TSG), in a phylogeny of mammals. 
 
 The objectives of this study are:
@@ -19,11 +19,10 @@ The objectives of this study are:
 * Compare germline evolution against somatic variation.
 * Identify episodes of positive selection on cancer genes across mamalian species.
 
-#Species
+# Species
 For this study, we compared 32 mammalian species with well annotated genomes. Information about the species see the table:
 https://drive.google.com/file/d/1GpDmoZHW6ZdfqBQ8Bn0OPM53OfESNrkt/view?usp=sharing
 
-#Data
 ## Cancer genes
 I retrieved cancer genes from the COSMIC database. A list of 574 genes classified as Tier 1 (i.e. those genes with a documented activity in cancer) was downloaded.
 https://drive.google.com/file/d/1GmpOnIMWBBgYBJZaUulY9MUOIgEO9g8I/view?usp=sharing
@@ -41,26 +40,7 @@ I created a compacted data frame from COSMIC table including following informati
 cat cosmic_cancer_genes.tsv | cut -f1,2,8,9,10,13,14,15,16 | head -n -4 > cosmic_cancer_genes_compacted.tsv 
 ```
 
-```{r gene_classifications, eval=F, fig.align='center', dpi=100, fig.width=8, fig.height=6,fig.cap="Figure 1. Venn Diagram representing the classification of genes according to their involvement in cancer (left) and tumor type (right)"}
-cancergenestable<-read.table("/home/user/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/tables/cosmic_cancer_genes.tsv",header = T,sep = "\t",na.strings = "-")
-
-#Classification 1: Role in cancer
-tsg<-cancergenestable[grep("TSG",cancergenestable$Role.in.Cancer),1]
-onc<-cancergenestable[grep("oncogene",cancergenestable$Role.in.Cancer),1]
-fus<-cancergenestable[grep("fusion",cancergenestable$Role.in.Cancer),1]
-
-epit<-cancergenestable[grep("E",cancergenestable$Tissue.Type),1]
-lymp<-cancergenestable[grep("L",cancergenestable$Tissue.Type),1]
-myel<-cancergenestable[grep("M",cancergenestable$Tissue.Type),1]
-other<-cancergenestable[grep("O",cancergenestable$Tissue.Type),1]
-
-library(venn) #Plot veen diagrams
-par(mfrow=c(1,2),mar=rep(1,4))
-
-vd1<-venn(list(onc,tsg,fus),snames=c("Oncogenes", "Tumor supressor Genes","Fusion"), ilab=T, cexil = 1, zcolor="style")
-vd2<-venn(list(epit,lymp,myel,other),snames=c("Epithelial", "Leuk/Lymph","Myeloid", "Others"), ilab=T, cexil = 1, zcolor="style")
-```
-
+## Retrieving human cancer genes
 I retrieved information for human genes using Ensembl BioMArt (see *ensemble_gene_id.tsv* file). 
 After applying several supporting factors for gene annotation and transcript support level, I finally obtained 535 supported genes.
 ```{bash, filter_genes}
