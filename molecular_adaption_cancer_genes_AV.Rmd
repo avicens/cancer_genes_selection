@@ -64,28 +64,11 @@ mkdir ${GENEDIR}/$gene
 done < ${DATADIR}/genenames.txt
 ```
 
-#Retrieving Orthologs
-##Get human peptide sequences
-I extract the Ensembl protein ID from the human protein infromation table
+#Get orthologs from mammalian genomes
+For this step, I first extracted the Ensembl protein ID column from the *ensembl_gene_uniq.tsv* table.
 ```{bash}
 cut -f2 ensembl_gene_uniq.tsv > protein_ensembl_id.txt
 ```
-I retrieve peptide sequences of human proteins with BioMart (see *human_pep_seqs.fasta*), then I move the retrieved human protein sequences to the respective gene folder.
-```{bash}
-#!/bin/bash
-WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
-DATADIR="${WORKDIR}/data"
-GENEDIR="${WORKDIR}/genes"
-GENENAMES=`ls ${GENEDIR}`
-HUMANSEQS="${DATADIR}/human_pep_seqs_one_line.fasta"
-
-while read -r gene; do
-SEQFILE=`grep "|${gene}$" ${HUMANSEQS} | sed -e 's/^>//' -e 's/|/_/' -e 's/.*$/&.fas/'`
-grep -A1 "|${gene}$" ${HUMANSEQS} > ${GENEDIR}/${gene}/${SEQFILE}
-done <<< "${GENENAMES}"
-```
-
-#Get orthologs for human sequences
 I use the BiomaRt library implemented in R to get orthologues for all genes and from all species. 
 ```{r get_orthologues, eval=F, dpi=100, fig.width=8, fig.height=6, fig.cap= "Figure 1. Heatmap representing the presence/absence pattern of 535 cancer genes across 32 mammalian genomes."}
 library(biomaRt)
