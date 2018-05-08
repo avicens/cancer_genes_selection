@@ -7,5 +7,5 @@ GENENAMES=`ls ${GENEDIR}`
 
 while read -r gene; do
 echo "trimming alignment for ${gene}"
-trimal -in ${GENEDIR}/${gene}/align/${gene}_align_DNA_trimmed.fasta -out ${GENEDIR}/${gene}/align/${gene}_align_DNA_trimmed2.fasta -gt 0.4 -st 0.1 -resoverlap 0.8 -seqoverlap 70
+trimal -in ${GENEDIR}/${gene}/align/${gene}_align_DNA_curated.fasta -out ${GENEDIR}/${gene}/align/${gene}_align_DNA_trimmed.fasta -gt 0.4 -st 0.1 -resoverlap 0.8 -seqoverlap 70
 done <<< "${GENENAMES}"
