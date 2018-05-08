@@ -62,4 +62,10 @@ Phylogenetic trees for each gene were built using the program RAxML-ng (*Stamata
   * 10 randomized parsimony starting trees
   * General Time Reversible substitution model with discrete GAMMA model of rate heterogeneity with 4 categories (GTR+G)
   * 100 bootstrap replicates
+  
+The code to build phylogenetic trees for every gene was written into **run_raxml_array.sh**
+
+### Comparing gene trees with the sepcies tree
+In order to retain reliable gene families, I estimated the distance of each gene tree with respect to a well supported mammalian species tree using ETE3 (*Huerta-Cepas et al. 2016*). The code to launch this analysis is written in **compare_trees.sh**
+
 
