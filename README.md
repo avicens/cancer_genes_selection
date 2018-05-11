@@ -83,3 +83,7 @@ Using MSA and gene trees as input files, I applied the following selection site 
   * Test of positive slection applying models **M1 vsM2** and **M8 vs M8a**
 
 All these models were conducted with the script **run_codeml.sh**
+
+### Branch-site test on human
+I also tested for positive seleciton on human branch conducting the *branch-site test* (Zhang et al. 2005). To perform this analysis on all alignments that contain human sequence, I run the script **run_codeml_bs_human.sh**
+
