@@ -14,6 +14,7 @@ I retrieved cancer genes from the Cancer Gene Census (CGC) repository of the COS
 The dataset was cleaned in order to be used for later analysis with the R script **build_fundata_table.R** 
 
 The variables included in the dataset are:
+
 * Somatic
 * Germline
 * Tumor type
@@ -55,5 +56,30 @@ The applied  parameters were:
 
 The trimming task was implemented in the script **trim_msa.sh** 
 
+## Tree reconstruction
+Phylogenetic trees for each gene were built using the program RAxML-ng (*Stamatakis 2014, Kozlov 2016*). The phylogenetic reconstruction analysis included ML tree search + non-parametric bootstrap, with these parameters:
 
+  * 10 randomized parsimony starting trees
+  * General Time Reversible substitution model with discrete GAMMA model of rate heterogeneity with 4 categories (GTR+G)
+  * 100 bootstrap replicates
+  
+The code to build phylogenetic trees for every gene was written into **run_raxml_array.sh**
 
+### Estimation of tree distances
+In order to retain reliable gene families, I estimated the distance of each gene tree with respect to a well supported mammalian species tree using ETE3 (*Huerta-Cepas et al. 2016*). The code to launch this analysis is written in **compare_trees.sh**
+
+## Selection analysis
+Tests of positive selection were performed with the Codeml program implemented in PAML (Yang 2007), but I used the ETE3 evol package (Huerta-Cepas et al. 2006) to conduct analysis in simplest way. The set parameters in common for all models were:
+
+  * Codon frequency: codon table
+  * Initial omega: 0.7
+  * Number of gamma categories: 4
+
+### Site-models
+Using MSA and gene trees as input files, I applied the following selection site models on each gene:
+
+  * Estimation of global evolutionary rate (dN/dS) with the model **M0**.
+  * Test of variation in evolutionary rate across sites with the model **M3**
+  * Test of positive slection applying models **M1 vsM2** and **M8 vs M8a**
+
+All these models were conducted with the script **run_codeml.sh**
