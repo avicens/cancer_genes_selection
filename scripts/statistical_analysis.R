@@ -6,44 +6,18 @@ load("data/fundata") #Load data frame with functional data (COSMIC)
 fulldata<-merge(evoldata, fundata,by="gene")
 attach(fulldata)
 
-
-#Boxplot
-#dN/dS
-driv_dNdS<-ggboxplot(fulldata, x = "driver", y = "dNdS",color="driver",palette="jco",ylab = "Global dN/dS", xlab=FALSE, legend=NULL) 
-driv_dNdS2<- driv_dNdS + stat_compare_means(method="t.test",label.x=1.5,cex=5)
-
-#dN
-driv_dN<-ggboxplot(fulldata, x = "driver_mc", y = "dN",color="driver_mc",palette="jco",ylab = "dN", xlab=FALSE, legend=NULL) 
-driv_dN2<- driv_dN + stat_compare_means(method="t.test",label.x=1.5,cex=5)
-
-#dS
-driv_dS<-ggboxplot(fulldata, x = "driver_mc", y = "dS",color="driver_mc",palette="jco",ylab = "dS", xlab=FALSE, legend=NULL) 
-driv_dS2<-driv_dS + stat_compare_means(method="t.test",label.x=1.5,cex=5)
-
-
 ### Comparison of dN/dS across categories
 source("scripts/dndspercat.R") #Load function to generate dataframes per category
 source("scripts/make_comparisons.R") #Load function to generate comparisons invariables with more than 2 classes
-
 library(ggpubr) #Load "ggpubr" library for getting labelled box plot
 
-###1.Molecular constraints
+###Statistical analysis
 
-##1.1. Mutation type (somatic, germline) I: comparison of a variable after grouping its data with the oter variable
-#Comparing somatic mutations
-som_plot<-ggboxplot(fulldata, x = "somatic", y = "avomega",color="somatic",palette="jco",ylab = "Global dN/dS", short.panel.labs = F) + stat_compare_means(method="wilcox.test",label.x=1.5,cex=5)
-somfacetpl<-ggboxplot(fulldata, x = "somatic", y = "avomega",color="somatic",palette="jco",facet.by="germline",ylab = "Global dN/dS", short.panel.labs = F) + stat_compare_means(method="wilcox.test",label.x=1.5,cex=4)
-#Comparing germinal mutations
-ger_plot<-ggboxplot(fulldata, x = "germline", y = "avomega",color="germline",palette="jco",ylab = "Global dN/dS") + stat_compare_means(method="wilcox.test",label.x=1.5,cex=5)
-gerfacetpl<-ggboxplot(fulldata, x = "germline", y = "avomega",color="germline",palette="jco",facet.by="somatic",ylab = "Global dN/dS", short.panel.labs = F) + stat_compare_means(method="wilcox.test",label.x=1.5,cex=4)
-
-#Mutations type (somatic, germline) II: comparison of 3 groups
-mutclasses<-unique(unlist(strsplit(as.character(fulldata$mut.class),split=", ")))
+#1.Mutations type (somatic, germline)
+mutclasses<-unique(unlist(strsplit(as.character(fulldata$Mut.class),split=", ")))
 mutclassnames<-c("Somatic","Som + Germ", "Germinal")
-mutclassdf<-dndspercat(mutclasses,mutclassnames,fulldata,mut.class)
+mutclassdf<-dndspercat(mutclasses,mutclassnames,fulldata,Mut.class)
 
-#Data exploration
-table(mutclassdf$class) #Check the sample size for each group
 mutclasscomp<-make.comparisons(mutclassnames) #Generate a list with all possible comparisons
 
 #Boxplot
@@ -60,7 +34,7 @@ mutclass_dS<-ggboxplot(mutclassdf, x = "class", y = "dS", select= mutclassnames,
 mutclass_dS2<-mutclass_dS + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 13, label.x = 0.7)
 
 
-##1.2. Molecular genetics
+##2. Molecular genetics
 genet<-levels(fulldata$genetics)
 genet<-c("Dom","Rec")
 genames<-c("Dominant","Recessive")
@@ -82,7 +56,7 @@ gen_dN2<-gen_dN + stat_compare_means(method = "t.test", label.y = 5, label.x = 0
 gen_dS<-ggboxplot(gendf, x = "class", y = "dS", select= genames, color="class",palette="jco",xlab=FALSE, ylab = "dS") 
 gen_dS2<-gen_dS + stat_compare_means(method = "t.test", label.y = 15, label.x = 0.7)
 
-#1.3. Functional effect of coding mutations
+#3. Functional effect of coding mutations
 mutype<-gsub("\"","",fulldata$mutation.type)
 mutype<-unique(unlist(strsplit(mutype,", |. |,| ")))
 mutype2<-c("Mis","N")
@@ -150,10 +124,8 @@ can_dN2<- can_dN + stat_compare_means(method = "t.test", comparisons=cancomp, la
 can_dS<-ggboxplot(candf, x = "class", y = "dS", select= canrole, color="class",palette="jco",xlab=FALSE, ylab = "dS")
 can_dS2<-can_dS + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + stat_compare_means(method = "anova", label.y = 4.2, label.x = 0.7)
 
-###2.3. Tumour type
-tumour<-unique(unlist(strsplit(levels(fulldata$tumour.type),split=",|;")))
-tumger<-unique(unlist(strsplit(levels(fundata2$Tumour.Types.Germline.),split=",|;")))
-tumger<-tumger[!(tumger=="FANCD1)")]
+###2.3. Chromosome (X/autosomic)
+
 
 
 ##multiplot (dN/dS)
