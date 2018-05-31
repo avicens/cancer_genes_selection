@@ -22,11 +22,11 @@ mutclasscomp<-make.comparisons(mutclassnames) #Generate a list with all possible
 
 #Boxplot
 #dN/dS
-mutclass_dNdS<-ggboxplot(mutclassdf, x = "class", y = "dNdS", select= mutclassnames, color="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
-mutclass_dNdS2<-mutclass_dNdS + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 1, label.x = 0.7)
+mut_dNdS<-ggboxplot(mutclassdf, x = "class", y = "log10(dNdS)", select= mutclassnames, color="class",palette="jco",xlab=NULL, ylab = "log10 (dN/dS)") 
+mut_dNdS<-mutclass_dNdS + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 1.5, label.x = 0.7)
 
 #dN
-mutclass_dN<-ggboxplot(mutclassdf, x = "class", y = "dN", select= mutclassnames, color="class",palette="jco",xlab=FALSE, ylab = "dN") 
+mutclass_dN<-ggboxplot(mutclassdf, x = "class", y = "dN", select= mutclassnames, fill="class",palette="jco",xlab=FALSE, ylab = "dN") 
 mutclass_dN2<-mutclass_dN + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 4, label.x = 0.7)
 
 #dS
@@ -35,18 +35,18 @@ mutclass_dS2<-mutclass_dS + stat_compare_means(method = "t.test", comparisons = 
 
 
 ##2. Molecular genetics
-genet<-levels(fulldata$genetics)
+genet<-levels(fulldata$inheritance)
 genet<-c("Dom","Rec")
 genames<-c("Dominant","Recessive")
-gendf<-dndspercat(genet,genames,fulldata,genetics)
+gendf<-dndspercat(genet,genet,fulldata,inheritance)
 
 #Data exploration
 table(gendf$class) #Check the sample size for each group
 gencomp<-make.comparisons(genames) #Generate a list with all possible comparisons
 
 #dN/dS
-gen_dnds<-ggboxplot(gendf, x = "class", y = "dNdS", select= genames, color="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
-gen_dnds2<-gen_dnds + stat_compare_means(method = "t.test", label.y = 1, label.x = 0.7, cex=5)
+inh_dnds<-ggboxplot(fulldata,x="inheritance",y="log10(dNdS)", fill ="inheritance", palette="jco", select=c("Dom","Rec"),xlab=FALSE, ylab="log10(dN/dS)")
+inh_dnds<-inh_dnds + stat_compare_means(method = "t.test", label.y = 1, label.x = 0.7, cex=5)
 
 #dN
 gen_dN<-ggboxplot(gendf, x = "class", y = "dN", select= genames, color="class",palette="jco",xlab=FALSE, ylab = "dN") 
@@ -57,18 +57,18 @@ gen_dS<-ggboxplot(gendf, x = "class", y = "dS", select= genames, color="class",p
 gen_dS2<-gen_dS + stat_compare_means(method = "t.test", label.y = 15, label.x = 0.7)
 
 #3. Functional effect of coding mutations
-mutype<-gsub("\"","",fulldata$mutation.type)
+mutype<-gsub("\"","",fulldata$impact)
 mutype<-unique(unlist(strsplit(mutype,", |. |,| ")))
 mutype2<-c("Mis","N")
 mutnames<-c("Missense","Nonsense")
-mutefdf<-dndspercat(mutype2,mutnames,fulldata,mutation.type)
+mutefdf<-dndspercat(mutype2,mutnames,fulldata,impact)
 
 #Data exploration
 table(mutefdf$class) #Check the sample size for each group
 
 #Boxplot
 #dN/dS
-mutef_dnds<-ggboxplot(mutefdf, x = "class", y = "dNdS", select= mutnames, color="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
+imp_dnds<-ggboxplot(mutefdf, x = "class", y = "log10(dNdS)", select= mutnames, fill="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
 mutef_dnds2<- mutef_dnds + stat_compare_means(method = "t.test", label.y = 0.6, label.x = 1.5, cex= 5)
 
 #dN
