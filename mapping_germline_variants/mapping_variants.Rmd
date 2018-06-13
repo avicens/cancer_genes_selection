@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "~/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/mapping_germline_variants/")
 ```
 
@@ -27,7 +27,7 @@ We apply the processing steps:
 * Filter the rows to get only missense variants
 * Create a column with the position of the  variant
 
-```{r, loadPatoghenicVars}
+```{r, loadPatoghenicVars, eval=FALSE}
 download.file(url = "https://ars.els-cdn.com/content/image/1-s2.0-S0092867418303635-mmc2.xlsx", destfile="germline_variants_Huang.xlsx", method ="curl")
 
 library(xlsx)
@@ -42,13 +42,23 @@ save(pathog,file="pathog")
 # Mapping variants on gene products
 ## BRCA2
 
-```{r subsetBRCA, eval=TRUE}
+We retireve pathogenic germline variants of BRCA2, and filtered for **missense** and **stop-gained** variants.
+```{r pathogenicBRCA, eval=TRUE}
 load(file = "pathog")
 pathogBRCA2<-subset(pathog, Gene=="BRCA2")
 pathogBRCA2<-subset(pathogBRCA2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
 pathogBRCA2
 ```
-#
+
+```{r pssBRCA2, eval=TRUE}
+brca2M2<-read.csv("BRCA2/M2/BRCA2_M2_rstval.csv", header=T) #Data frame with dN/dS values and probabilities under M2a model 
+brca2M8<-read.csv("BRCA2/M8/BRCA2_M8_rstval.csv", header=T) #Data frame with dN/dS values and probabilities under M8 model 
+brca2Ome<-merge(brca2M2,brca2M8,by="Position")
+brca2PSS<-subset(brca2Ome, subset= (ProbClass3.x > 0.95 | ProbClass11 > 0.95), select=c(Position, Residue.x, Omega.x, Omega.y))
+names(brca2PSS)= c("Position","Residue", "dNdS_M2", "dNdSM8")
+brca2PSS
+
+```
 
 
 # References
