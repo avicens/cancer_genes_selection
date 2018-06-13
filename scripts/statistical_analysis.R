@@ -21,18 +21,8 @@ mutclassdf<-dndspercat(mutclasses,mutclassnames,fulldata,Mut.class)
 mutclasscomp<-make.comparisons(mutclassnames) #Generate a list with all possible comparisons
 
 #Boxplot
-#dN/dS
-mut_dNdS<-ggboxplot(mutclassdf, x = "class", y = "log10(dNdS)", select= mutclassnames, color="class",palette="jco",xlab=NULL, ylab = "log10 (dN/dS)") 
-mut_dNdS<-mutclass_dNdS + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 1.5, label.x = 0.7)
-
-#dN
-mutclass_dN<-ggboxplot(mutclassdf, x = "class", y = "dN", select= mutclassnames, fill="class",palette="jco",xlab=FALSE, ylab = "dN") 
-mutclass_dN2<-mutclass_dN + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 4, label.x = 0.7)
-
-#dS
-mutclass_dS<-ggboxplot(mutclassdf, x = "class", y = "dS", select= mutclassnames, color="class",palette="jco",xlab=FALSE, ylab = "dS") 
-mutclass_dS2<-mutclass_dS + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 13, label.x = 0.7)
-
+mut_dNdS<-ggboxplot(mutclassdf, x = "class", y = "log10(dNdS)", select= mutclassnames, fill="class",palette="jco",xlab=FALSE, ylab = "log10 (dN/dS)") 
+mut_dNdS2 <- mut_dNdS + stat_compare_means(method = "t.test", comparisons = mutclasscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 1.5, label.x = 0.7) + theme(legend.position="none")
 
 ##2. Molecular genetics
 genet<-levels(fulldata$inheritance)
@@ -40,21 +30,11 @@ genet<-c("Dom","Rec")
 genames<-c("Dominant","Recessive")
 gendf<-dndspercat(genet,genet,fulldata,inheritance)
 
-#Data exploration
-table(gendf$class) #Check the sample size for each group
+#Boxplot
 gencomp<-make.comparisons(genames) #Generate a list with all possible comparisons
 
-#dN/dS
 inh_dnds<-ggboxplot(fulldata,x="inheritance",y="log10(dNdS)", fill ="inheritance", palette="jco", select=c("Dom","Rec"),xlab=FALSE, ylab="log10(dN/dS)")
-inh_dnds<-inh_dnds + stat_compare_means(method = "t.test", label.y = 1, label.x = 0.7, cex=5)
-
-#dN
-gen_dN<-ggboxplot(gendf, x = "class", y = "dN", select= genames, color="class",palette="jco",xlab=FALSE, ylab = "dN") 
-gen_dN2<-gen_dN + stat_compare_means(method = "t.test", label.y = 5, label.x = 0.7)
-
-#dS
-gen_dS<-ggboxplot(gendf, x = "class", y = "dS", select= genames, color="class",palette="jco",xlab=FALSE, ylab = "dS") 
-gen_dS2<-gen_dS + stat_compare_means(method = "t.test", label.y = 15, label.x = 0.7)
+inh_dnds2 <-inh_dnds + stat_compare_means(method = "t.test", label.y = 1, label.x = 0.7, cex=5) + theme(legend.position="none")
 
 #3. Functional effect of coding mutations
 mutype<-gsub("\"","",fulldata$impact)
@@ -63,27 +43,13 @@ mutype2<-c("Mis","N")
 mutnames<-c("Missense","Nonsense")
 mutefdf<-dndspercat(mutype2,mutnames,fulldata,impact)
 
-#Data exploration
-table(mutefdf$class) #Check the sample size for each group
-
 #Boxplot
-#dN/dS
 imp_dnds<-ggboxplot(mutefdf, x = "class", y = "log10(dNdS)", select= mutnames, fill="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
 mutef_dnds2<- mutef_dnds + stat_compare_means(method = "t.test", label.y = 0.6, label.x = 1.5, cex= 5)
 
-#dN
-mutef_dN<-ggboxplot(mutefdf, x = "class", y = "dN", select= mutnames, color="class",palette="jco",xlab=FALSE, ylab = "dN") 
-mutef_dN2<-mutef_dN + stat_compare_means(method = "t.test", label.x= 0.5)
-
-#dS
-mutef_dS<-ggboxplot(mutefdf, x = "class", y = "dS", select= mutnames, color="class",palette="jco",xlab=FALSE, ylab = "dS") 
-mutef_dS2<- mutef_dS + stat_compare_means(method = "t.test", label.x = 0.5)
-
-
-###2. Cancer constraints###
-###2.1. Tissue type
+##4. Tissue type
 tissues<-unique(unlist(strsplit(levels(fulldata$tissue.type),split=",|;")))
-tisnames<-c("Epithelial","Leuk/Lymp","Mesen","Other")
+tisnames<-c("Epith","Leu/Lym","Mesen","Other")
 tisdf<-dndspercat(tissues,tisnames,fulldata,tissue.type)
 
 #Data exploration
@@ -92,65 +58,59 @@ tiscomp<-make.comparisons(tisnames) #Generate a list with all possible compariso
 
 #Boxplot
 #dN/dS
-tis_dnds<-ggboxplot(tisdf, x = "class", y = "dNdS", select= tisnames, color="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
-tis_dnds2<-tis_dnds + stat_compare_means(method = "t.test", comparisons = tiscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 1.2, label.x = 0.7)
+tis_dnds<-ggboxplot(tisdf, x = "class", y = "log10(dNdS)", select= tisnames, fill="class",palette="jco",xlab=FALSE, ylab = "log10 (dN/dS)") 
+tis_dnds2<-tis_dnds + stat_compare_means(method = "t.test", comparisons = tiscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 1.2, label.x = 0.7) + theme(legend.position="none")
 
-#dN
-tis_dN<-ggboxplot(tisdf, x = "class", y = "dN", select= tisnames, color="class",palette="jco",xlab=FALSE, ylab = "dN") 
-tis_dN2<-tis_dN + stat_compare_means(method = "t.test", comparisons = tiscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 5, label.x = 0.7)
-
-#dS
-tis_dS<-ggboxplot(tisdf, x = "class", y = "dS", select= tisnames, color="class",palette="jco",xlab=FALSE, ylab = "dS") 
-tis_dS2<-tis_dS + stat_compare_means(method = "t.test", comparisons = tiscomp,label="p.signif") + stat_compare_means(method = "anova", label.y = 15, label.x = 0.7)
-
-##2.2.Cancer role
+##5.Cancer role
 canrole<-gsub("\"","",levels(fulldata$cancer.role))
 canrole<-unique(unlist(strsplit(canrole,", ")))
 candf<-dndspercat(canrole, canrole,fulldata,cancer.role)
 
-#Data exploration
-table(candf$class) #Check the sample size for each group
 cancomp<-make.comparisons(canrole) #Generate a list with all possible comparisons
 
 #dN/dS
-can_dnds<-ggboxplot(candf, x = "class", y = "dNdS", select= canrole, color="class",palette="jco",xlab=FALSE, ylab = "Global dN/dS") 
-can_dnds2<-can_dnds + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + stat_compare_means(method = "anova", label.y = 1, label.x = 0.7, cex=5)
+can_dnds<-ggboxplot(candf, x = "class", y = "log10(dNdS)", select= canrole, fill="class",palette="jco",xlab=FALSE, ylab = "log10 (dN/dS)") 
+can_dnds2 <- can_dnds + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + stat_compare_means(method = "anova", label.y = 1, label.x = 0.7, cex=5) + theme(legend.position = "none")
 
-#dN
-can_dN<-ggboxplot(candf, x = "class", y = "dN", select= canrole, color="class",palette="jco",xlab=FALSE, ylab = "dN") 
-can_dN2<- can_dN + stat_compare_means(method = "t.test", comparisons=cancomp, label ="p.signif") + stat_compare_means(method = "anova", label.y = 4.2, label.x = 0.7) 
-
-#dS
-can_dS<-ggboxplot(candf, x = "class", y = "dS", select= canrole, color="class",palette="jco",xlab=FALSE, ylab = "dS")
-can_dS2<-can_dS + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + stat_compare_means(method = "anova", label.y = 4.2, label.x = 0.7)
-
-###2.3. Chromosome (X/autosomic)
-
-
+##6.Chromosome (X/autosomic)
+chr_dNdS<-ggboxplot(fulldata,x="chr.type",y="log10(dNdS)", fill="chr.type",palette="jco", xlab=FALSE,ylab="log10(dN/dS)")
+chr_dNdS2 <- chr_dNdS + stat_compare_means(method = "t.test", label.y = 1, label.x = 0.7) + theme(legend.position = "none")
 
 ##multiplot (dN/dS)
-ggarrange(mutclass_dNdS2, gen_dnds2, mutef_dnds2, tis_dnds2, can_dnds2, driv_dNdS2, nrow=2, ncol=3)
+ggarrange(mutclass_dNdS2, gendf, mutef_dnds2, tis_dnds2, can_dnds2, driv_dNdS2, nrow=2, ncol=3)
 
 ##Multiplot (dN,dS)
 ggarrange(mutclass_dN2,mutclass_dS2,gen_dN2,gen_dS2,mutef_dN2, mutef_dS2,tis_dN2,tis_dS2,can_dN2,can_dS2, driv_dN2, driv_dS2, nrow=2, ncol= 6)
 
-#Comparison of proportion of positively selected genes
-mutclassChisq<-chisq.test(table(mutclassdf$psgenes, mutclassdf$class))
+#Comparison of proportion of positively selected genes (chi-square text)
+mutclassChisq<-chisq.test(table(mutclassdf$PS, mutclassdf$class))
 genChisq<-chisq.test(table(gendf$psgenes, gendf$class))
 mutefChisq<-chisq.test(table(mutefdf$psgenes, mutefdf$class))
 tisChisq<-chisq.test(table(tisdf$psgenes, tisdf$class))
 canChisq<-chisq.test(table(candf$psgenes, candf$class))
 drivChisq<-chisq.test(table(fulldata$psgenes,fulldata$driver))
 
-#Mosaic plost comparing proportion of positively selected genes
-png(file="figures/mosaicplots1")
-par(mfrow=c(2,3), oma=c(rep(1,4)))
-mosaicplot(table(mutclassdf$class,mutclassdf$psgenes),ylab="Positive selection",color = c("lightblue","red"),main = "Mutation type",cex.axis =1,xlab=paste("p-value(chisq.test)",round(mutclassChisq$p.value,5),sep="="))
-mosaicplot(table(gendf$class,gendf$psgenes),ylab="Positive selection",color = c("lightblue","red"),main = "Genetics",cex.axis =1,xlab=paste("p-value(chisq.test)",round(genChisq$p.value,3),sep="="))
-mosaicplot(table(mutefdf$class,mutefdf$psgenes),ylab="Positive selection",color = c("lightblue","red"),main = "Mutation type",cex.axis =1,xlab=paste("p-value(chisq.test)",round(mutefChisq$p.value,3),sep="="))
-mosaicplot(table(tisdf$class,tisdf$psgenes),ylab="Positive selection",color = c("lightblue","red"),main = "Tissue type",cex.axis =1,xlab=paste("p-value(chisq.test)",round(tisChisq$p.value,3),sep="="))
-mosaicplot(table(candf$class,candf$psgenes),ylab="Positive selection",color = c("lightblue","red"),main = "Cancer role",cex.axis =1,xlab=paste("p-value(chisq.test)",round(canChisq$p.value,3),sep="="))
-mosaicplot(table(fulldata$driver,fulldata$psgenes),ylab="Positive selection (germinal)",color = c("lightblue","red"),main = "Positive selection (somatic)",cex.axis =1,xlab=paste("p-value(chisq.test)",round(drivChisq$p.value,3),sep="="))
+mut_ps<-as.data.frame(table(mutclassdf$PS,mutclassdf$class))
+names(mut_ps)<-c("PS","mut.class","Freq")
+mut_ps2<-ggplot(mut_ps,aes(mut.class,Freq,fill=PS)) + geom_bar(stat="identity",position = position_fill(reverse = TRUE)) + labs(x="Mutation Type", y="Proportion of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + scale_x_discrete(limits=c("Somatic","Som + Germ", "Germinal")) + theme(legend.position ="top")
+
+inh_ps<-as.data.frame(table(PS,inheritance))
+inh_ps2<-ggplot(inh_ps,aes(inheritance,Freq,fill=PS)) + geom_bar(stat="identity", position = position_fill(reverse = TRUE)) + labs(x="Inheritance", y="Proportion of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + scale_x_discrete(limits=c("Dom","Rec")) + theme(legend.position ="top")
+
+tis_ps<-as.data.frame(table(tisdf$PS,tisdf$class))
+names(tis_ps)<-c("PS","tissue.type","Freq")
+tis_ps2<-ggplot(tis_ps,aes(tissue.type,Freq,fill=PS)) + geom_bar(stat="identity",position = position_fill(reverse = TRUE)) + labs(x="Tissue Type", y="Proportion of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + theme(legend.position ="top")
+
+can_ps<-as.data.frame(table(candf$PS,candf$class))
+names(can_ps)<-c("PS","cancer.role","Freq")
+can_ps2<-ggplot(can_ps,aes(cancer.role,Freq,fill=PS)) + geom_bar(stat="identity",position = position_fill(reverse = TRUE)) + labs(x="Role in Cancer", y="Proportion of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + theme(legend.position ="top")
+
+chr_ps<-as.data.frame(table(PS,chr.type))
+chr_ps2<-ggplot(chr_ps,aes(chr.type,Freq,fill=PS)) + geom_bar(stat="identity", position = position_fill(reverse = TRUE)) + labs(x="Chromosome", y="Number of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + scale_x_discrete(limits=c("A","X")) + theme(legend.position ="top")
+
+png("statistical_comparison/Rplot02.png",width = 1300, height=650)
+ggarrange(mut_dNdS2,inh_dnds2, tis_dnds2, can_dnds2, chr_dNdS2,mut_ps2,inh_ps2, tis_ps2, can_ps2, chr_ps2,ncol = 5, nrow=2)
+dev.off()
 
 ###Correlation dN/dS Somatic vs Germinal evolution
 cordNdS<-cor.test(dNdS, log10(dnds_mc))
