@@ -1,0 +1,56 @@
+---
+title: "Mapping germline variants with PSS"
+author: "Alberto Vicens Sanchez"
+date: "June 12, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+knitr::opts_knit$set(root.dir = "~/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/mapping_germline_variants/")
+```
+
+We want to map the positively selected sites (PSS)with pathogenic germline variants (Huang et al. 2018) and somatic variants (COSMIC repository) identified in three tumor supressor genes: and BRCA2, BRIP1, PALB2.
+
+# Load and processing datasets
+
+## Germline variants
+We download a dataset with the germline variants from 10,389 cases in 33 cancer types, obtained from the TGCA PanCanAtlas germline analysis working group (Huang et al. 2018, Table S2).
+
+This table is in excel format, by which we wrequire the *xlsx* library. We load the first sheet, which contains the pathogenic variants.
+We apply the processing steps:
+
+* Extract the columns **HUGO_symbol**, **Variant_Classification** and **HGVSp**
+* Rename the columns
+* Convert the variant classification to character and split HGVSp to get only the mutation
+* Remove HGVSp columns
+* Filter the rows to get only missense variants
+* Create a column with the position of the  variant
+
+```{r, loadPatoghenicVars}
+download.file(url = "https://ars.els-cdn.com/content/image/1-s2.0-S0092867418303635-mmc2.xlsx", destfile="germline_variants_Huang.xlsx", method ="curl")
+
+library(xlsx)
+pathogenic<-read.xlsx("germline_variants_Huang.xlsx", sheetIndex=1, header=TRUE)
+pathog<-pathogenic[,c("HUGO_Symbol","Variant_Classification","HGVSp")]
+colnames(pathog)<-c("Gene","Classification","HGVSp")
+pathog<-transform(pathog, Gene = as.character(Gene), Classification = as.character(Classification), Mutation= sapply(strsplit(as.character(pathog$HGVSp),"\\."),"[",2))
+pathog<-pathog[,-3]
+save(pathog,file="pathog")
+```
+
+# Mapping variants on gene products
+## BRCA2
+
+```{r subsetBRCA, eval=TRUE}
+load(file = "pathog")
+pathogBRCA2<-subset(pathog, Gene=="BRCA2")
+pathogBRCA2<-subset(pathogBRCA2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+pathogBRCA2
+```
+#
+
+
+# References
+
+* Huang KL, Mashl RJ, Wu Y, Ritter DI, Wang J, Oh C, Paczkowska M, Reynolds S, Wyczalkowski MA, Oak N, Scott AD, Krassowski M, Cherniack AD, Houlahan KE, Jayasinghe R, Wang LB, Zhou DC, Liu D, Cao S, Kim YW, Koire A, McMichael JF, Hucthagowder V, Kim TB, Hahn A, Wang C, McLellan MD, Al-Mulla F, Johnson KJ; Cancer Genome Atlas Research Network, Lichtarge O, Boutros PC, Raphael B, Lazar AJ, Zhang W, Wendl MC, Govindan R, Jain S, Wheeler D, Kulkarni S, Dipersio JF, Reimand J, Meric-Bernstam F, Chen K, Shmulevich I, Plon SE, Chen F, Ding L. Cell. 2018 Apr 5;173(2):355-370.e14. doi: 10.1016/j.cell.2018.03.039. PMID: 29625052
