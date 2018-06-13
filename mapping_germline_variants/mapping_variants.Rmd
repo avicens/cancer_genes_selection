@@ -47,7 +47,7 @@ We retireve pathogenic germline variants of BRCA2, and filtered for **missense**
 load(file = "pathog")
 pathogBRCA2<-subset(pathog, Gene=="BRCA2")
 pathogBRCA2<-subset(pathogBRCA2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
-pathogBRCA2
+unique(pathogBRCA2)
 ```
 
 ```{r pssBRCA2, eval=TRUE}
@@ -57,9 +57,15 @@ brca2Ome<-merge(brca2M2,brca2M8,by="Position")
 brca2PSS<-subset(brca2Ome, subset= (ProbClass3.x > 0.95 | ProbClass11 > 0.95), select=c(Position, Residue.x, Omega.x, Omega.y))
 names(brca2PSS)= c("Position","Residue", "dNdS_M2", "dNdSM8")
 brca2PSS
-
 ```
 
+#BLM
+
+```{r pathogenicBLM, eval=TRUE}
+pathogBLM<-subset(pathog, Gene=="BLM")
+pathogBLM<-subset(pathogBLM, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogBLM) #There are repeated variants
+```
 
 # References
 
