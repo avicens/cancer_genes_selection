@@ -16,7 +16,7 @@ library(ggpubr) #Load "ggpubr" library for getting labelled box plot
 #1.Mutations type (somatic, germline)
 mutclasses<-unique(unlist(strsplit(as.character(fulldata$Mut.class),split=", ")))
 mutclassnames<-c("Somatic","Som + Germ", "Germinal")
-mutclassdf<-dndspercat(mutclasses,mutclassnames,fulldata,Mut.class)
+mutclassdf<-dndspercat(mutclasses,mutclassnames,fulldata,mut.class)
 
 mutclasscomp<-make.comparisons(mutclassnames) #Generate a list with all possible comparisons
 
@@ -84,12 +84,13 @@ ggarrange(mutclass_dN2,mutclass_dS2,gen_dN2,gen_dS2,mutef_dN2, mutef_dS2,tis_dN2
 
 #Comparison of proportion of positively selected genes (chi-square text)
 mutclassChisq<-chisq.test(table(mutclassdf$PS, mutclassdf$class))
-genChisq<-chisq.test(table(gendf$psgenes, gendf$class))
-mutefChisq<-chisq.test(table(mutefdf$psgenes, mutefdf$class))
-tisChisq<-chisq.test(table(tisdf$psgenes, tisdf$class))
-canChisq<-chisq.test(table(candf$psgenes, candf$class))
-drivChisq<-chisq.test(table(fulldata$psgenes,fulldata$driver))
+genChisq<-chisq.test(table(gendf$PS, gendf$class))
+mutefChisq<-chisq.test(table(mutefdf$PS, mutefdf$class))
+tisChisq<-chisq.test(table(tisdf$PS, tisdf$class))
+canChisq<-chisq.test(table(candf$PS, candf$class))
+drivChisq<-chisq.test(table(fulldata$PS,fulldata$driver))
 
+#Barplots  comparing proportion of positively selected genes
 mut_ps<-as.data.frame(table(mutclassdf$PS,mutclassdf$class))
 names(mut_ps)<-c("PS","mut.class","Freq")
 mut_ps2<-ggplot(mut_ps,aes(mut.class,Freq,fill=PS)) + geom_bar(stat="identity",position = position_fill(reverse = TRUE)) + labs(x="Mutation Type", y="Proportion of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + scale_x_discrete(limits=c("Somatic","Som + Germ", "Germinal")) + theme(legend.position ="top")
@@ -108,11 +109,12 @@ can_ps2<-ggplot(can_ps,aes(cancer.role,Freq,fill=PS)) + geom_bar(stat="identity"
 chr_ps<-as.data.frame(table(PS,chr.type))
 chr_ps2<-ggplot(chr_ps,aes(chr.type,Freq,fill=PS)) + geom_bar(stat="identity", position = position_fill(reverse = TRUE)) + labs(x="Chromosome", y="Number of genes") + scale_fill_manual(values = c("DodgerBlue","FireBrick")) + theme_grey(base_size=14) + scale_x_discrete(limits=c("A","X")) + theme(legend.position ="top")
 
+#Arrange all plots andsave figure
 png("statistical_comparison/Rplot02.png",width = 1300, height=650)
 ggarrange(mut_dNdS2,inh_dnds2, tis_dnds2, can_dnds2, chr_dNdS2,mut_ps2,inh_ps2, tis_ps2, can_ps2, chr_ps2,ncol = 5, nrow=2)
 dev.off()
 
-###Correlation dN/dS Somatic vs Germinal evolution
+###Correlation between dN/dS Somatic vs Germinal evolution
 cordNdS<-cor.test(dNdS, log10(dnds_mc))
 somgerplot <- ggplot(fulldata,aes(dNdS,log10(pnps),colour=driver))+geom_point(size=2) + xlab("germinal rate (dN/dS)") + ylab("log10(somatic rate (pN/pS))") 
 somgerplot <- somgerplot + annotate(x=0.5, y=1.5, label=paste("R = ", round(cordNdS$estimate,2)),geom="text", size=5) + annotate(x=0.5, y=1.35, label=paste("p = ", round(cordNdS$p.value,2)),geom="text", size=5)
