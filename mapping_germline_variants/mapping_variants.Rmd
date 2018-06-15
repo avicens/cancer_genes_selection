@@ -49,7 +49,7 @@ pathogBRCA2<-subset(pathog, Gene=="BRCA2")
 pathogBRCA2<-subset(pathogBRCA2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
 unique(pathogBRCA2)
 ```
-
+We retrieved the PSS under M2a and M8 models.
 ```{r pssBRCA2, eval=TRUE}
 brca2M2<-read.csv("BRCA2/M2/BRCA2_M2_rstval.csv", header=T) #Data frame with dN/dS values and probabilities under M2a model 
 brca2M8<-read.csv("BRCA2/M8/BRCA2_M8_rstval.csv", header=T) #Data frame with dN/dS values and probabilities under M8 model 
@@ -59,12 +59,42 @@ names(brca2PSS)= c("Position","Residue", "dNdS_M2", "dNdSM8")
 brca2PSS
 ```
 
-#BLM
-
+## BLM
+The germline variants
 ```{r pathogenicBLM, eval=TRUE}
 pathogBLM<-subset(pathog, Gene=="BLM")
 pathogBLM<-subset(pathogBLM, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
 unique(pathogBLM) #There are repeated variants
+```
+
+## BUB1B
+
+```{r pathogenicBRCA, eval=TRUE}
+load(file = "pathog")
+pathogBUB1B<-subset(pathog, Gene=="BUB1B")
+pathogBUB1B<-subset(pathogBUB1B, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogBUB1B)
+```
+
+## CHEK2
+
+```{r pathogenicCHEK2, eval=TRUE}
+pathogCHEK2<-subset(pathog, Gene=="CHEK2")
+pathogCHEK2<-subset(pathogCHEK2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogCHEK2)
+```
+
+## DDB2
+```{r pathogenicDDB2, eval=TRUE}
+pathogDDB2<-subset(pathog, Gene=="DDB2")
+pathogDDB2<-subset(pathogDDB2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogDDB2)
+```
+## SDHD
+```{r pathogenicSDHS, eval=TRUE}
+pathogSDHD<-subset(pathog, Gene=="SDHD")
+pathogSDHD<-subset(pathogSDHD, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogSDHD)
 ```
 
 # References
