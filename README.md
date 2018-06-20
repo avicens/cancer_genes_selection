@@ -16,13 +16,14 @@ The dataset was cleaned in order to be used for later analysis with the R script
 
 The variables included in the dataset are:
 
-* Somatic
-* Germline
-* Tumor type
+* Mutation type (Somatic/Germline)
+* Tumor type (Somatic/Germline)
+* Syndrome
 * Tissue type
-* Molecular genetics
-* Role in cancer
-* Mutation type
+* Inheritance
+* Cancer role
+* Chromosome type (X/Autosome)
+
 
 ### Retrieving human protein annotations
 The first column of the cancer genes dataset, which contains the gene names, was extracted and the information for human genes was retrieved using Ensembl BioMArt (http://www.ensembl.org/biomart/martview/4ee102879139fc3bf745f9a867064956). In the exported file, genes with no protein annotated were discarded, obtaining 535 genes. On these genes, the protein isoform with the best transcript support level was chosen. The obtained dataset is the file **ensembl_gene_uniq.tsv**.
