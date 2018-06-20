@@ -1,6 +1,6 @@
 # Molecular Adaption of Cancer Genes
 ## Description
-In this repository I describe the workflow followed to process and analyze the data of the study "Selective constraints driving the Germinal Evolution of Cancer Genes in Mammals" *(manuscript in preparation)*.
+In this repository I describe the workflow followed to process and analyze the data of the study "Positive selection of Cancer Associated Genes in Mammals" *(manuscript in preparation)*.
 
 ## Repository content
 The repository contains the scripts written to perform the computational tasks of this study, as well as the input files required as input in some steps.
@@ -9,7 +9,8 @@ The scripts were written to upload jobs to a SLURM-based scheduling system (CESG
 
 ## Sequence Data Collection
 ### Cancer genes dataset
-I retrieved cancer genes from the Cancer Gene Census (CGC) repository of the COSMIC v84 database. A list of 574 genes classified as Tier 1 (i.e. those genes with a documented activity in cancer) was downloaded. This dataset can be accessed with the link https://cancer.sanger.ac.uk/cosmic/census?tier=1 on March 5th, 2018. The dataset correspons to the **Table S1** of the manuscript. 
+I retrieved cancer genes from the [Cancer Gene Census Database](https://cancer.sanger.ac.uk/cosmic/census?tier=1) of the COSMIC v84 database. A list of 574 genes classified as Tier 1 (those genes with a documented activity in cancer) was downloaded. 
+This dataset was accessed on March 5th, 2018, and corresponds to the **Table S1** of the manuscript. 
 
 The dataset was cleaned in order to be used for later analysis with the R script **build_fundata_table.R** 
 
@@ -75,7 +76,6 @@ Tests of positive selection were performed with the Codeml program implemented i
   * Initial omega: 0.7
   * Number of gamma categories: 4
 
-### Site-models
 Using MSA and gene trees as input files, I applied the following selection site models on each gene:
 
   * Estimation of global evolutionary rate (dN/dS) with the model **M0**.
@@ -86,4 +86,3 @@ All these models were conducted with the script **run_codeml.sh**
 
 ### Branch-site test on human
 I also tested for positive seleciton on human branch conducting the *branch-site test* (Zhang et al. 2005). To perform this analysis on all alignments that contain human sequence, I run the script **run_codeml_bs_human.sh**
-
