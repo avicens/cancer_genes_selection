@@ -35,16 +35,3 @@ tissues<-unique(unlist(tissues))
 tt<-unlist(sapply(as.character(fundata$tissue.type),strcomb),use.names=F)
 
 fundata$tissue.type<-as.factor(sub(" ","",fundata$tissue.type))
-
-#Add data from MartinCorena
-mcdata<-read.table("data/datos_iñigo.tsv",sep="\t",header=T)
-mcdata<-mcdata[c(1:202),-ncol(mcdata)]
-driver_mc<-sapply(gene,function(x) {x %in% mcdata$gene})
-
-mcdnds<-read.table("Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/data/dNdScv_output_PANCANCER.txt",sep="\t",header=T)
-idy <- sapply(as.character(fundata[,1]),function (x) which(as.character(mcdnds[,1])==x))
-mcdnds2<-mcdnds[idy,]
-fundata$dnds_mc<-mcdnds2$wmis3
-
-colnames(fundata)[11] = "driver"; colnames(fundata)[12] = "pnps"
-fundata$driver[fundata$driver == TRUE] = "yes"; fundata$driver[fundata$driver == FALSE] = "no"
