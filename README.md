@@ -1,4 +1,4 @@
-# Molecular Adaption of Cancer Genes
+# Positive Selection of Cancer Genes
 ## Description
 In this repository I describe the workflow followed to process and analyze the data of the study "Positive selection of Cancer Associated Genes in Mammals" *(manuscript in preparation)*.
 
