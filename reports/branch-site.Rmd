@@ -10,38 +10,7 @@ To indentify cancer genes under positive selection in specific lineages, I condu
 ## Branch-site models
 Branch-site tests compare neutral and selection site-models on each branch in the phylogeny. In this case, we just analyzed the terminal branches leading to each lineage (internal branches were not evaluated). 
 I run the analysis using ETE3 package (Huerta-Cepas et al. 2016) and jobs were submitted to the *CESGA* computing cluster.
-```{bash, call_bs_array, eval=FALSE}
-#!/bin/bash
 
-WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
-SCRIPTDIR="${WORKDIR}/scripts"
-GENEDIR="${WORKDIR}/genes"
-number_genes=`ls ${GENEDIR} | wc -l`
-echo "Analyzing "$number_genes" genes..."
-
-## Create a folder and put slurm output inside
-pipeline_name=`basename $0`
-slurm_info=$(echo `date` | awk -v argument=$pipeline_name '{print argument"_"$3$
-mkdir -p $slurm_info
-cd $slurm_info
-
-sbatch --array=1-${numb#!/bin/bash
-
-WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
-SCRIPTDIR="${WORKDIR}/scripts"
-GENEDIR="${WORKDIR}/genes"
-number_genes=`ls ${GENEDIR} | wc -l`
-echo "Analyzing "$number_genes" genes..."
-
-## Create a folder and put slurm output inside
-pipeline_name=`basename $0`
-slurm_info=$(echo `date` | awk -v argument=$pipeline_name '{print argument"_"$3$
-mkdir -p $slurm_info
-cd $slurm_info
-
-sbatch --array=1-${number_genes} -p shared --qos shared ${SCRIPTDIR}/run_codeml$
-er_genes} -p shared --qos shared ${SCRIPTDIR}/run_codeml$
-```
 ```{bash, bs_test, eval=FALSE}
 #!bin/bash
                               
@@ -56,7 +25,9 @@ source activate /home/uvi/be/avs/lustre/tools/miniconda_avs
 echo "Running Codeml for ${gene}"
 $TMPDIR} --resume > ${GENEDIR}/${gene}/paml/${gene}_bs_test.out
 ```
+##Data processing
 
+###Getting nodes ID
 
 
 
