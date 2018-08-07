@@ -1,0 +1,55 @@
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/Slr
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/codeml
+
+Running CodeML/Slr (2 CPUs)
+  - processing model M1 (M1~cae74a82a10051fdf4a2843f397d08eb)
+  - processing model M2 (M2~389cd9a48a1f6849ce1e4fadfd16a16b)
+
+LRT
+
+                                         Null model |                             Alternative model | p-value
+   =================================================|===============================================|============
+                M1~cae74a82a10051fdf4a2843f397d08eb |           M2~389cd9a48a1f6849ce1e4fadfd16a16b | 1.000000
+
+SUMMARY BY MODEL
+
+ - Model M1
+   * Average omega for all tree: 0.064
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+            1-  12   |   Relaxed (probability > 0.99)
+           14-  31   |   Relaxed (probability > 0.99)
+           33-  65   |   Relaxed (probability > 0.99)
+                66   |   Relaxed (probability > 0.95)
+           67- 130   |   Relaxed (probability > 0.99)
+               132   |   Relaxed (probability > 0.95)
+          133- 137   |   Relaxed (probability > 0.99)
+          139- 141   |   Relaxed (probability > 0.99)
+               143   |   Relaxed (probability > 0.99)
+          145- 176   |   Relaxed (probability > 0.99)
+          178- 180   |   Relaxed (probability > 0.99)
+               181   |   Relaxed (probability > 0.95)
+          182- 191   |   Relaxed (probability > 0.99)
+               192   |   Relaxed (probability > 0.95)
+
+ - Model M2
+   * Average omega for all tree: 0.064
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+            1-  12   |   Conserved (probability > 0.99)
+                13   |   Conserved (probability > 0.95)
+           14-  88   |   Conserved (probability > 0.99)
+           90-  99   |   Conserved (probability > 0.99)
+          101- 122   |   Conserved (probability > 0.99)
+          124- 130   |   Conserved (probability > 0.99)
+               131   |   Conserved (probability > 0.95)
+          132- 133   |   Conserved (probability > 0.99)
+          136- 137   |   Conserved (probability > 0.99)
+               138   |   Conserved (probability > 0.95)
+          139- 141   |   Conserved (probability > 0.99)
+               142   |   Conserved (probability > 0.95)
+               143   |   Conserved (probability > 0.99)
+          145- 180   |   Conserved (probability > 0.99)
+          182- 191   |   Conserved (probability > 0.99)

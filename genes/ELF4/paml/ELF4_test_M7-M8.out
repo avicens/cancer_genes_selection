@@ -1,0 +1,60 @@
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/Slr
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/codeml
+
+Running CodeML/Slr (3 CPUs)
+  - processing model M7 (M7~6bb7bf1635100167b8b04c69dc1c2d03)
+  - processing model M8 (M8~d6ce589688150a2578cef262ed8a7f88)
+  - processing model M8a (M8a~7a6da7ac26d379ef028970ad259ff0af)
+
+LRT
+
+                                         Null model |                             Alternative model | p-value
+   =================================================|===============================================|============
+                M7~6bb7bf1635100167b8b04c69dc1c2d03 |           M8~d6ce589688150a2578cef262ed8a7f88 | 0.000131**
+                M7~6bb7bf1635100167b8b04c69dc1c2d03 |          M8a~7a6da7ac26d379ef028970ad259ff0af | 0.000025**
+               M8a~7a6da7ac26d379ef028970ad259ff0af |           M8~d6ce589688150a2578cef262ed8a7f88 | 0.763350
+
+SUMMARY BY MODEL
+
+ - Model M7
+   * Average omega for all tree: 0.279
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+                91   |   Relaxed (probability > 0.95)
+               128   |   Relaxed (probability > 0.95)
+               155   |   Relaxed (probability > 0.99)
+               194   |   Relaxed (probability > 0.95)
+               305   |   Relaxed (probability > 0.95)
+               323   |   Relaxed (probability > 0.99)
+               343   |   Relaxed (probability > 0.95)
+               344   |   Relaxed (probability > 0.99)
+               369   |   Relaxed (probability > 0.95)
+               373   |   Relaxed (probability > 0.95)
+               396   |   Relaxed (probability > 0.95)
+               504   |   Relaxed (probability > 0.95)
+          529- 531   |   Relaxed (probability > 0.99)
+               532   |   Relaxed (probability > 0.95)
+               534   |   Relaxed (probability > 0.95)
+               549   |   Relaxed (probability > 0.95)
+               552   |   Relaxed (probability > 0.95)
+               555   |   Relaxed (probability > 0.95)
+
+ - Model M8
+   * Average omega for all tree: 0.279
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+               155   |   Positively-selected (probability > 0.95)
+
+ - Model M8a
+   * Average omega for all tree: 0.278
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+               128   |   Relaxed (probability > 0.95)
+               155   |   Relaxed (probability > 0.99)
+               323   |   Relaxed (probability > 0.95)
+               344   |   Relaxed (probability > 0.95)
+               396   |   Relaxed (probability > 0.95)
+          529- 532   |   Relaxed (probability > 0.95)

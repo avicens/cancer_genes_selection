@@ -1,0 +1,29 @@
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/Slr
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/codeml
+
+Running CodeML/Slr (2 CPUs)
+  - processing model M1 (M1~ce244617f57cd46a72cffe760300263f)
+  - processing model M2 (M2~4777d823710884a0a5b21d1cd13242f2)
+
+LRT
+
+                                         Null model |                             Alternative model | p-value
+   =================================================|===============================================|============
+                M1~ce244617f57cd46a72cffe760300263f |           M2~4777d823710884a0a5b21d1cd13242f2 | 0.999990
+
+SUMMARY BY MODEL
+
+ - Model M1
+   * Average omega for all tree: 0.003
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+            1- 782   |   Relaxed (probability > 0.99)
+
+ - Model M2
+   * Average omega for all tree: 0.003
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+            1-  59   |   Conserved (probability > 0.99)
+           61- 781   |   Conserved (probability > 0.99)
