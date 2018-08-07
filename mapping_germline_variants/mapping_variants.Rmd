@@ -1,0 +1,102 @@
+---
+title: "Mapping germline variants with PSS"
+author: "Alberto Vicens Sanchez"
+date: "June 12, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/mapping_germline_variants/")
+```
+
+We want to map the positively selected sites (PSS)with pathogenic germline variants (Huang et al. 2018) and somatic variants (COSMIC repository) identified in three tumor supressor genes: and BRCA2, BRIP1, PALB2.
+
+# Load and processing datasets
+
+## Germline variants
+We download a dataset with the germline variants from 10,389 cases in 33 cancer types, obtained from the TGCA PanCanAtlas germline analysis working group (Huang et al. 2018, Table S2).
+
+This table is in excel format, by which we wrequire the *xlsx* library. We load the first sheet, which contains the pathogenic variants.
+We apply the processing steps:
+
+* Extract the columns **HUGO_symbol**, **Variant_Classification** and **HGVSp**
+* Rename the columns
+* Convert the variant classification to character and split HGVSp to get only the mutation
+* Remove HGVSp columns
+* Filter the rows to get only missense variants
+* Create a column with the position of the  variant
+
+```{r, loadPatoghenicVars, eval=FALSE}
+download.file(url = "https://ars.els-cdn.com/content/image/1-s2.0-S0092867418303635-mmc2.xlsx", destfile="germline_variants_Huang.xlsx", method ="curl")
+
+library(xlsx)
+pathogenic<-read.xlsx("germline_variants_Huang.xlsx", sheetIndex=1, header=TRUE)
+pathog<-pathogenic[,c("HUGO_Symbol","Variant_Classification","HGVSp")]
+colnames(pathog)<-c("Gene","Classification","HGVSp")
+pathog<-transform(pathog, Gene = as.character(Gene), Classification = as.character(Classification), Mutation= sapply(strsplit(as.character(pathog$HGVSp),"\\."),"[",2))
+pathog<-pathog[,-3]
+save(pathog,file="pathog")
+```
+
+# Mapping variants on gene products
+## BRCA2
+
+We retireve pathogenic germline variants of BRCA2, and filtered for **missense** and **stop-gained** variants.
+```{r pathogenicBRCA, eval=TRUE}
+load(file = "pathog")
+pathogBRCA2<-subset(pathog, Gene=="BRCA2")
+pathogBRCA2<-subset(pathogBRCA2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogBRCA2)
+```
+We retrieved the PSS under M2a and M8 models.
+```{r pssBRCA2, eval=TRUE}
+brca2M2<-read.csv("BRCA2/M2/BRCA2_M2_rstval.csv", header=T) #Data frame with dN/dS values and probabilities under M2a model 
+brca2M8<-read.csv("BRCA2/M8/BRCA2_M8_rstval.csv", header=T) #Data frame with dN/dS values and probabilities under M8 model 
+brca2Ome<-merge(brca2M2,brca2M8,by="Position")
+brca2PSS<-subset(brca2Ome, subset= (ProbClass3.x > 0.95 | ProbClass11 > 0.95), select=c(Position, Residue.x, Omega.x, Omega.y))
+names(brca2PSS)= c("Position","Residue", "dNdS_M2", "dNdSM8")
+brca2PSS
+```
+
+## BLM
+The germline variants
+```{r pathogenicBLM, eval=TRUE}
+pathogBLM<-subset(pathog, Gene=="BLM")
+pathogBLM<-subset(pathogBLM, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogBLM) #There are repeated variants
+```
+
+## BUB1B
+
+```{r pathogenicBRCA, eval=TRUE}
+load(file = "pathog")
+pathogBUB1B<-subset(pathog, Gene=="BUB1B")
+pathogBUB1B<-subset(pathogBUB1B, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogBUB1B)
+```
+
+## CHEK2
+
+```{r pathogenicCHEK2, eval=TRUE}
+pathogCHEK2<-subset(pathog, Gene=="CHEK2")
+pathogCHEK2<-subset(pathogCHEK2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogCHEK2)
+```
+
+## DDB2
+```{r pathogenicDDB2, eval=TRUE}
+pathogDDB2<-subset(pathog, Gene=="DDB2")
+pathogDDB2<-subset(pathogDDB2, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogDDB2)
+```
+## SDHD
+```{r pathogenicSDHS, eval=TRUE}
+pathogSDHD<-subset(pathog, Gene=="SDHD")
+pathogSDHD<-subset(pathogSDHD, subset = (Classification == "missense_variant" | Classification == "stop_gained"))
+unique(pathogSDHD)
+```
+
+# References
+
+* Huang KL, Mashl RJ, Wu Y, Ritter DI, Wang J, Oh C, Paczkowska M, Reynolds S, Wyczalkowski MA, Oak N, Scott AD, Krassowski M, Cherniack AD, Houlahan KE, Jayasinghe R, Wang LB, Zhou DC, Liu D, Cao S, Kim YW, Koire A, McMichael JF, Hucthagowder V, Kim TB, Hahn A, Wang C, McLellan MD, Al-Mulla F, Johnson KJ; Cancer Genome Atlas Research Network, Lichtarge O, Boutros PC, Raphael B, Lazar AJ, Zhang W, Wendl MC, Govindan R, Jain S, Wheeler D, Kulkarni S, Dipersio JF, Reimand J, Meric-Bernstam F, Chen K, Shmulevich I, Plon SE, Chen F, Ding L. Cell. 2018 Apr 5;173(2):355-370.e14. doi: 10.1016/j.cell.2018.03.039. PMID: 29625052
