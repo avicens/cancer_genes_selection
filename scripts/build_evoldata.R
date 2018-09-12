@@ -120,5 +120,5 @@ evoldata<-cbind(evoldata, PS)
 
 ###Filtering data
 #Discard genes with saturation of synonymous substitutions (dS > 15)
-evoldata_cur<-evoldata[!(evoldata$dS > 15),]
+evoldata<-evoldata[!(evoldata$dS > 15),]
 
