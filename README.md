@@ -53,21 +53,21 @@ For this task, I wrote the **download_ortholog_cds_array.sh** script that call t
 Coding nucleotide sequences were aligned using the software MACSE (*Ranwez et al. 2011*). This program accounts for frameshifts and stop codons, and it is optimal for aligning coding sequences. To perform the MSA for every gene, I wrote the script **multiple_alignment_array.sh**
 
 ### Curating MSA
-In the MSA curation process, were applied the following steps:
+In the MSA curation process, the following steps were applied:
 
+* Remove STOP codons
 * Clean up secondary annotations of fasta headers to jusy retain Ensembl Gene IDs
 * Discarding duplicate sequences
 * Substitution of "!" characters (inserted by MACSE to corect frameshits) for "N" characters.
 
-Every step were sequentially performed with the script **curate_msa.sh**
-
-### Trimming MSA
 Once the MSAa were curated, they were trimmed to remove poorly aligned positions and sequences using TrimAl (*Capella-Gutierrez et al. 2009*).
 The applied  parameters were:
 
 * Delete columns with gaps in more than 60% of the sequences.
 * Delete columns with a similarity score lower than 0.1
 * Remove sequences not covering at least the 60% of residues that achieve an overlap, with the rest of the sequences, of 0.75.
+
+All these steps were sequentially performed with the script **process_msa.sh**
 
 The trimming task was implemented in the script **trim_msa.sh** 
 
