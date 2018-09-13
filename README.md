@@ -69,8 +69,6 @@ The applied  parameters were:
 
 All these steps were sequentially performed with the script **process_msa.sh**
 
-The trimming task was implemented in the script **trim_msa.sh** 
-
 ## Tree reconstruction
 Phylogenetic trees for each gene were built using the program RAxML-ng (*Stamatakis 2014, Kozlov 2016*). The phylogenetic reconstruction analysis included ML tree search + non-parametric bootstrap, with these parameters:
 
