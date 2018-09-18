@@ -1,4 +1,5 @@
 library(stringr)
+library(magrittr)
 
 genedir<-"/home/uvi/be/avs/lustre/cancer_genes_selection/genes"
 genelist<-list.files(genedir)
@@ -34,8 +35,22 @@ for (i in 1:length(genelist)){
 
 evoldata<-cbind(evoldata,dN,dS,dNdS)
 
-#Add columns with likelihood values and LRT
+#Discard genes with saturation of synonymous substitutions (dS > 15)
+evoldata<-evoldata[!(evoldata$dS > 15),]
 
+#Add the significance (p-value) from LRT of BUSTED analysis
+lrtBusted<-numeric()
+
+for (i in 1:length(genelist)) {
+  fileBusted<-readLines(paste(genedir,"/",genelist[i],"/hyphy/",genelist[i],"_busted.out",sep=""))
+  lrtBusted[i]<-as.numeric(sapply(strsplit(tail(fileBusted,1),split="\\*\\*"),"[",2) %>% 
+                             str_sub( .,start=-6))
+}
+
+padjBusted<-p.adjust(lrtBusted,method="fdr", n=length(lrtBusted)) #Correct p-value for multiple testing
+evoldata<-cbind(evoldata,padjBusted)
+
+#Add LRTs for test of variation amog sites (M0 vs M3 models in PAML)
 lhM0=as.numeric()
 lhM3=as.numeric()
 for (i in 1:length(genelist)){
@@ -52,7 +67,7 @@ lrtM0M3<-1-pchisq(2*(lhM3-lhM0),6) #Likelihood ratio test
 
 evoldata<-cbind(evoldata,lhM0,lhM3,lrtM0M3)
 
-#Site models
+#Add LRTs from the comparisons of PAML site-models
 ##M1 vs M2 test
 lhM1=as.numeric()
 lhM2=as.numeric()
@@ -107,6 +122,8 @@ for (i in 1:length(genelist)){
 evoldata$PSS_M2<-pssM2
 evoldata$PSS_M8<-pssM8
 
+#Add column to indicate genes identified under positive selection
+#by one of the LRTs
 PS<-character()
 
 for (i in 1:nrow(evoldata)){
@@ -118,7 +135,15 @@ for (i in 1:nrow(evoldata)){
 
 evoldata<-cbind(evoldata, PS)
 
-###Filtering data
-#Discard genes with saturation of synonymous substitutions (dS > 15)
-evoldata<-evoldata[!(evoldata$dS > 15),]
+#Add column to indicate genes identified under positive selection
+#by both LRTs
+robPS<-character()
 
+for (i in 1:nrow(evoldata)){
+  g<-evoldata[i,c("padjM1M2","padjM8aM8")]
+  if (g[1] < 0.01 & g[2] < 0.01) {
+    robPS[i] = "Yes"
+  } else {robPS[i] = "No"}
+}
+
+evoldata<-cbind(evoldata,robPS)
