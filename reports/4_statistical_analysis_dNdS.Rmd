@@ -1,0 +1,126 @@
+---
+title: "4_statistical_analysis (I): dN/dS comparisons"
+author: "Alberto Vicens Sanchez"
+date: "June 20, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval=TRUE, warnings=F, comment = F, cache=TRUE, cache.path="/home/user/phylogenomics_lab/cancer_genes_selection/cache", autodep=TRUE,  fig.path="/home/user/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/figures/")
+knitr::opts_knit$set(root.dir = "~/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/")
+```
+
+## Analysis description
+I will compare the dN/dS estimates across these functional categories:
+
+* Mutation type
+* Tissue type
+* Inheritance
+* Functional impact
+* Cancer role
+* Chromosome type
+
+## Getting data
+We require to load **fundata** and **evoldata**. These dataframes must be located in the *data* directory.
+To know how we generated these datasets, see to the scripts **build_fundata_table.R** and **build_evoldata.R** in the *scripts* directory.
+
+```{r load_data, eval=T}
+load("data/evoldata") #Load data frame with evolutionary data (PAML)
+load("data/fundata")
+fulldata<-merge(evoldata, fundata,by="gene")
+attach(fulldata)
+
+source("scripts/dndspercat.R") #Load function to generate dataframes per category
+source("scripts/make_comparisons.R") #Load function to generate comparisons invariables with more than 2 classes
+library(ggpubr) #Load "ggpubr" library for getting labelled box plot
+```
+
+```{r mutation_type, fig.align="center", fig.cap= "Comparison of evolutionary rates of genes across mutation classes"} 
+#Mutation class
+##Specify the comparisons
+mutcomp<-make.comparisons(as.character(unique(fulldata$mut.class)))
+
+#Boxplots
+##dN/dS
+mutdNdSplot<-ggboxplot(fulldata, x = "mut.class", y = "dN/dS", fill ="mut.class",palette="jco", xlab = FALSE, ylab = "dN/dS", notch=FALSE) + stat_compare_means(method = "t.test", comparisons = mutcomp) + theme(legend.position="none")
+
+##dN
+mutdNplot<-ggboxplot(fulldata, x = "mut.class", y = "dN", fill ="mut.class",palette="jco", xlab = FALSE, ylab = "dN/dS", notch=FALSE) + stat_compare_means(method = "t.test", comparisons = mutcomp) + theme(legend.position="none")
+
+##dS
+mutdSplot<-ggboxplot(fulldata, x = "mut.class", y = "dS", fill ="mut.class",palette="jco", xlab = FALSE, ylab = "dN/dS", notch=FALSE) + stat_compare_means(method = "t.test", comparisons = mutcomp) + theme(legend.position="none")
+ggarrange(mutdNdSplot,mutdNplot,mutdSplot, ncol=3, labels="AUTO")
+```
+
+```{r inheritance, fig.align="center",fig.cap= "Comparison of evolutionary rates of genes across inheritance classes"}
+inhdNdSplot<-ggboxplot(fulldata, x = "inheritance", y = "dN/dS", select=c("Dominant","Recessive"), fill ="inheritance",palette="jco", xlab = FALSE, ylab = "dN/dS", notch=FALSE) + stat_compare_means(method = "t.test", label.y =1, label.x = 0.7, cex = 5) + theme(legend.position="none")
+
+inhdNplot<-ggboxplot(fulldata, x = "inheritance", y = "dN", select=c("Dominant","Recessive"), fill ="inheritance",palette="jco", xlab = FALSE, ylab = "dN", notch=FALSE) + stat_compare_means(method = "t.test", label.y =4, label.x = 0.7, cex = 5) + theme(legend.position="none")
+
+inhdSplot<-ggboxplot(fulldata, x = "inheritance", y = "dS", select=c("Dominant","Recessive"), fill ="inheritance",palette="jco", xlab = FALSE, ylab = "dS", notch=FALSE) + stat_compare_means(method = "t.test", label.y = 15, label.x = 0.7, cex = 5) + theme(legend.position="none")
+ggarrange(inhdNdSplot,inhdNplot,inhdSplot, ncol=3, labels="AUTO")
+```
+
+```{r effect, fig.align="center",fig.cap= "Comparison of evolutionary rates of genes across impact classes"}
+mutype<-gsub("\"","",fulldata$impact)
+mutype<-unique(unlist(strsplit(mutype,", |. |,| ")))
+mutype2<-c("Mis","N")
+mutnames<-c("Missense","Nonsense")
+mutefdf<-dndspercat(mutype2,mutnames,fulldata,impact)
+
+#Boxplots
+##dN/dS
+effdNdSplot<- ggboxplot(mutefdf, x = "class", y = "dN/dS", select= mutnames, fill ="class",palette="jco", xlab = FALSE, ylab = "dN/dS", notch=FALSE) + stat_compare_means(method = "t.test", label.y =0.75, label.x = 0.7, cex = 5) + theme(legend.position="none")
+
+effdNplot<- ggboxplot(mutefdf, x = "class", y = "dN", select= mutnames, fill ="class",palette="jco", xlab = FALSE, ylab = "dN", notch=FALSE) + stat_compare_means(method = "t.test", label.y =5, label.x = 0.5, cex = 5) + theme(legend.position="none")
+
+effdSplot <- ggboxplot(mutefdf, x = "class", y = "dS", select= mutnames, fill ="class",palette="jco", xlab = FALSE, ylab = "dS", notch=FALSE) + stat_compare_means(method = "t.test", label.y =15, label.x = 0.5, cex = 5) + theme(legend.position="none")
+ggarrange(effdNdSplot,effdNplot,effdSplot, ncol=3, labels="AUTO")
+```
+
+```{r tissue_type, fig.align="center",fig.cap= "Comparison of evolutionary rates of genes across tissue types"}
+#Tissue type
+tissues<-unique(unlist(strsplit(levels(fulldata$tissue.type),split=",|;")))
+tisnames<-c("Epith","Leu/Lym","Mesen","Others")
+tisdf<-dndspercat(tissues,tisnames,fulldata,fulldata$tissue.type)
+tiscomp<-make.comparisons(tisnames) #Generate a list with all possible comparisons
+
+tisdNdSplot <- ggboxplot(tisdf, x = "class", y = "dN/dS", select= tisnames, fill ="class",palette="jco", xlab = FALSE, ylab = "dN/dS", notch=FALSE) + stat_compare_means(method = "t.test", comparisons = tiscomp, label ="p.signif") + theme(legend.position="none")
+
+tisdNplot <- ggboxplot(tisdf, x = "class", y = "dN", select= tisnames, fill ="class",palette="jco", xlab = FALSE, ylab = "dN", notch=FALSE) + stat_compare_means(method = "t.test", comparisons = tiscomp, label ="p.signif") + theme(legend.position="none")
+
+tisdSplot <- ggboxplot(tisdf, x = "class", y = "dS", select= tisnames, fill ="class",palette="jco", xlab = FALSE, ylab = "dN", notch=FALSE) + stat_compare_means(method = "t.test",  comparisons = tiscomp, label ="p.signif") + theme(legend.position="none")
+ggarrange(tisdNdSplot,tisdNplot,tisdSplot, ncol=3, labels="AUTO")
+```
+
+```{r cancer_role, fig.align="center",fig.cap= "Comparison of evolutionary rates of genes across cancer role"}
+canrole<-gsub("\"","",levels(fulldata$cancer.role))
+canrole<-unique(unlist(strsplit(canrole,", ")))
+candf<-dndspercat(canrole, canrole,fulldata,cancer.role)
+cancomp<-make.comparisons(canrole) #Generate a list with all possible comparisons
+
+#dN/dS
+candNdSplot<- ggboxplot(candf, x = "class", y = "dNdS", select= canrole, fill="class",palette="jco",xlab=FALSE, ylab = "dN/dS",notch = FALSE) + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + theme(legend.position = "none")
+
+#dN
+candNplot <- ggboxplot(candf, x = "class", y = "dN", select= canrole, fill="class",palette="jco",xlab=FALSE, ylab = "dN",notch = FALSE) + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + theme(legend.position = "none")
+
+#dS
+candSplot <- ggboxplot(candf, x = "class", y = "dS", select= canrole, fill="class",palette="jco",xlab=FALSE, ylab = "dS",notch = FALSE) + stat_compare_means(method = "t.test", comparisons = cancomp, label ="p.signif") + theme(legend.position = "none")
+
+ggarrange(candNdSplot, candNplot, candSplot,ncol = 3, nrow = 1, labels = "AUTO")
+
+```
+```{r chromosome, fig.align="center",fig.cap= "Comparison of evolutionary rates of genes between chromosome types"}
+#dN/dS
+chrdNdSplot<-ggboxplot(fulldata,x="chr.type",y="dNdS", fill="chr.type",palette="jco", xlab=FALSE, ylab="dN/dS") + stat_compare_means(method = "t.test", label.y = 1, label.x = 0.7, cex=5) + theme(legend.position = "none")
+
+#dN
+chrdNplot<-ggboxplot(fulldata,x="chr.type",y="dN", fill="chr.type",palette="jco", xlab=FALSE, ylab="dN") + stat_compare_means(method = "t.test", label.y = 4, label.x = 0.7, cex=5) + theme(legend.position = "none")
+
+#dS
+chrdSplot<-ggboxplot(fulldata,x="chr.type",y="dS", fill="chr.type",palette="jco", xlab=FALSE, ylab="dS") + stat_compare_means(method = "t.test", label.y = 16, label.x = 0.7, cex=5) + theme(legend.position = "none")
+
+ggarrange(chrdNdSplot,chrdNplot,chrdSplot, ncol = 3, nrow = 1,labels = "AUTO")
+```
+
