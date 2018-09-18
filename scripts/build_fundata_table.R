@@ -4,9 +4,9 @@ setwd("~/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/")
 #1. Load table downloaded from COSMIC
 fundata<-read.csv("~/Dropbox/phylogenomics_lab_dbx/cancer_genes_selection/tables/cosmic_cancer_genes.csv", header=TRUE)
 
-#2. Remove variables which will not be analyzed
-fundata<-fundata[,-c(2,3,5:7,17:20)]
-colnames(fundata)<-c("gene","location", "somatic","germline","tumour.type.somatic","tumour.type.germline","syndrome","tissue.type","inheritance","cancer.role","impact")
+#2. Remove variables which will not be analyzed (I)
+fundata<-fundata[,-c(2,3,5:7,10:12,17:20)]
+colnames(fundata)<-c("gene","location", "somatic","germline","tissue.type","inheritance","cancer.role","impact")
 
 #3. Curate mutation columns
 fundata$somatic<-sub("^$","no",fundata$somatic)
@@ -25,13 +25,14 @@ fundata$mut.class<-as.factor(mut)
 chr<-sapply(strsplit(as.character(fundata$location),split=":"),"[",1); chr<-gsub("\"X,Y","X",chr,ignore.case = T)
 fundata$chr<-chr
 
-chrtype=chr; id<-which(chrtype!="X"); chrtype[id]="A"
+chrtype=chr; id<-which(chrtype!="X"); chrtype[id]="Autosome"
 fundata$chr.type=chrtype
 
-#5. Curate tissue.type column
-fundata$tissue.type<-as.factor(gsub("\"| ","",fundata$tissue.type))
-tissues<-strsplit(levels(fundata$tissue.type),split=",|;")
-tissues<-unique(unlist(tissues))
-tt<-unlist(sapply(as.character(fundata$tissue.type),strcomb),use.names=F)
+#5. Curate inheritance column
+fundata$inheritance<-gsub("Dom", "Dominant", fundata$inheritance) 
+fundata$inheritance<- gsub("Rec", "Recessive", fundata$inheritance)
+fundata$inheritance<-as.factor(fundata$inheritance)
 
-fundata$tissue.type<-as.factor(sub(" ","",fundata$tissue.type))
+#6. Remove variables which will not be analyzed (II)
+fundata<-fundata[,-c(3,4,10)]
+
