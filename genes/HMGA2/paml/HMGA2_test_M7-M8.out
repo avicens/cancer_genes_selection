@@ -1,0 +1,38 @@
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/Slr
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/codeml
+
+Running CodeML/Slr (3 CPUs)
+  - processing model M7 (M7~3b78120687ebd9e405ffbcd4f2e3ed71)
+  - processing model M8 (M8~f85888eabc5a2517fe63c6c0fdfe9cb4)
+  - processing model M8a (M8a~92ef984e97d4dcdacd090c69de5d5e6e)
+
+LRT
+
+                                         Null model |                             Alternative model | p-value
+   =================================================|===============================================|============
+                M7~3b78120687ebd9e405ffbcd4f2e3ed71 |           M8~f85888eabc5a2517fe63c6c0fdfe9cb4 | 0.000095**
+                M7~3b78120687ebd9e405ffbcd4f2e3ed71 |          M8a~92ef984e97d4dcdacd090c69de5d5e6e | 0.000029**
+               M8a~92ef984e97d4dcdacd090c69de5d5e6e |           M8~f85888eabc5a2517fe63c6c0fdfe9cb4 | 0.302931
+
+SUMMARY BY MODEL
+
+ - Model M7
+   * Average omega for all tree: 0.342
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+                96   |   Relaxed (probability > 0.95)
+
+ - Model M8
+   * Average omega for all tree: 0.379
+
+ - Model M8a
+   * Average omega for all tree: 0.328
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+                93   |   Relaxed (probability > 0.95)
+           95-  97   |   Relaxed (probability > 0.99)
+                99   |   Relaxed (probability > 0.99)
+          100- 102   |   Relaxed (probability > 0.95)
+          106- 108   |   Relaxed (probability > 0.99)

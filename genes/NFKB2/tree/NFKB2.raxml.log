@@ -1,0 +1,180 @@
+
+RAxML-NG v. 0.5.1b BETA released on 01.12.2017 by The Exelixis Lab.
+Authors: Alexey Kozlov, Alexandros Stamatakis, Diego Darriba, Tomas Flouri, Benoit Morel.
+Latest version: https://github.com/amkozlov/raxml-ng
+Questions/problems/suggestions? Please visit: https://groups.google.com/forum/#!forum/raxml
+
+WARNING: This is a BETA release, please use at your own risk!
+
+RAxML-NG was called as follows:
+
+raxml-ng-mpi --all --msa /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/align/NFKB2_align_DNA_trimmed.fasta --model GTR+G -tree pars{10} --bs-trees 100 --prefix /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2 --redo
+
+Analysis options:
+  run mode: ML tree search + bootstrapping
+  start tree(s): parsimony (10)
+  random seed: 1521664441
+  tip-inner: ON
+  pattern compression: ON
+  per-rate scalers: OFF
+  site repeats: OFF
+  branch lengths: ML estimate (linked)
+  SIMD kernels: AVX2
+  parallelization: NONE/sequential
+
+WARNING: Running in REDO mode: existing checkpoints are ignored, and all result files will be overwritten!
+
+[00:00:00] Reading alignment from file: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/align/NFKB2_align_DNA_trimmed.fasta
+[00:00:00] Loaded alignment with 27 taxa and 2703 sites
+
+Alignment comprises 1 partitions and 1304 patterns
+
+Partition 0: noname
+Model: GTR+FO+G4m
+Alignment sites / patterns: 2703 / 1304
+Gaps: 5.09 %
+Invariant sites: 49.17 %
+
+
+[00:00:00] Generating parsimony starting tree(s) with 27 taxa
+[00:00:01] Data distribution: partitions/thread: 1-1, patterns/thread: 1304-1304
+
+Starting ML tree search with 10 distinct starting trees
+
+[00:00:10] ML tree search #1, logLikelihood: -19931.139212
+[00:00:20] ML tree search #2, logLikelihood: -19931.139238
+[00:00:29] ML tree search #3, logLikelihood: -19931.139192
+[00:00:40] ML tree search #4, logLikelihood: -19931.139482
+[00:00:48] ML tree search #5, logLikelihood: -19931.139168
+[00:00:57] ML tree search #6, logLikelihood: -19931.139178
+[00:01:10] ML tree search #7, logLikelihood: -19931.139591
+[00:01:18] ML tree search #8, logLikelihood: -19931.139233
+[00:01:31] ML tree search #9, logLikelihood: -19931.139243
+[00:01:41] ML tree search #10, logLikelihood: -19931.139235
+
+[00:01:42] ML tree search completed, best tree logLH: -19931.139168
+
+[00:01:42] Starting bootstrapping analysis with 100 replicates.
+
+[00:01:50] Bootstrap tree #1, logLikelihood: -19792.386948
+[00:01:58] Bootstrap tree #2, logLikelihood: -20215.588253
+[00:02:06] Bootstrap tree #3, logLikelihood: -19784.613738
+[00:02:16] Bootstrap tree #4, logLikelihood: -19671.149306
+[00:02:23] Bootstrap tree #5, logLikelihood: -19976.247057
+[00:02:31] Bootstrap tree #6, logLikelihood: -20137.056486
+[00:02:41] Bootstrap tree #7, logLikelihood: -19503.732293
+[00:02:50] Bootstrap tree #8, logLikelihood: -20287.708434
+[00:02:59] Bootstrap tree #9, logLikelihood: -19382.053748
+[00:03:08] Bootstrap tree #10, logLikelihood: -19874.160812
+[00:03:18] Bootstrap tree #11, logLikelihood: -20058.297526
+[00:03:26] Bootstrap tree #12, logLikelihood: -20350.075436
+[00:03:35] Bootstrap tree #13, logLikelihood: -20230.794510
+[00:03:44] Bootstrap tree #14, logLikelihood: -20032.507564
+[00:03:55] Bootstrap tree #15, logLikelihood: -19953.541663
+[00:04:04] Bootstrap tree #16, logLikelihood: -19585.033579
+[00:04:14] Bootstrap tree #17, logLikelihood: -19823.203749
+[00:04:23] Bootstrap tree #18, logLikelihood: -20080.265168
+[00:04:35] Bootstrap tree #19, logLikelihood: -20024.839829
+[00:04:44] Bootstrap tree #20, logLikelihood: -19907.248734
+[00:04:52] Bootstrap tree #21, logLikelihood: -19452.617314
+[00:04:59] Bootstrap tree #22, logLikelihood: -20695.007084
+[00:05:09] Bootstrap tree #23, logLikelihood: -20091.192280
+[00:05:21] Bootstrap tree #24, logLikelihood: -20041.607996
+[00:05:30] Bootstrap tree #25, logLikelihood: -19673.608012
+[00:05:39] Bootstrap tree #26, logLikelihood: -19823.651223
+[00:05:49] Bootstrap tree #27, logLikelihood: -20479.935884
+[00:05:58] Bootstrap tree #28, logLikelihood: -19861.374401
+[00:06:08] Bootstrap tree #29, logLikelihood: -19260.687916
+[00:06:18] Bootstrap tree #30, logLikelihood: -19449.384579
+[00:06:27] Bootstrap tree #31, logLikelihood: -20032.574096
+[00:06:39] Bootstrap tree #32, logLikelihood: -20043.632805
+[00:06:49] Bootstrap tree #33, logLikelihood: -20058.047668
+[00:06:58] Bootstrap tree #34, logLikelihood: -19389.425223
+[00:07:07] Bootstrap tree #35, logLikelihood: -19807.043689
+[00:07:16] Bootstrap tree #36, logLikelihood: -20127.135761
+[00:07:26] Bootstrap tree #37, logLikelihood: -20040.489279
+[00:07:36] Bootstrap tree #38, logLikelihood: -19441.004174
+[00:07:46] Bootstrap tree #39, logLikelihood: -19944.287145
+[00:07:55] Bootstrap tree #40, logLikelihood: -19663.222379
+[00:08:05] Bootstrap tree #41, logLikelihood: -20254.726704
+[00:08:13] Bootstrap tree #42, logLikelihood: -20256.656796
+[00:08:23] Bootstrap tree #43, logLikelihood: -20142.564204
+[00:08:33] Bootstrap tree #44, logLikelihood: -18969.627717
+[00:08:42] Bootstrap tree #45, logLikelihood: -20455.699037
+[00:08:54] Bootstrap tree #46, logLikelihood: -19644.003068
+[00:09:05] Bootstrap tree #47, logLikelihood: -20579.347152
+[00:09:15] Bootstrap tree #48, logLikelihood: -19398.447540
+[00:09:24] Bootstrap tree #49, logLikelihood: -20193.248219
+[00:09:32] Bootstrap tree #50, logLikelihood: -19904.346554
+[00:09:43] Bootstrap tree #51, logLikelihood: -19671.886173
+[00:09:53] Bootstrap tree #52, logLikelihood: -19478.825607
+[00:10:02] Bootstrap tree #53, logLikelihood: -20006.461867
+[00:10:12] Bootstrap tree #54, logLikelihood: -19900.477081
+[00:10:23] Bootstrap tree #55, logLikelihood: -20081.514371
+[00:10:33] Bootstrap tree #56, logLikelihood: -19482.341756
+[00:10:42] Bootstrap tree #57, logLikelihood: -19668.473895
+[00:10:52] Bootstrap tree #58, logLikelihood: -19740.704350
+[00:11:03] Bootstrap tree #59, logLikelihood: -20260.322294
+[00:11:12] Bootstrap tree #60, logLikelihood: -19550.401979
+[00:11:26] Bootstrap tree #61, logLikelihood: -20118.221310
+[00:11:37] Bootstrap tree #62, logLikelihood: -20452.249696
+[00:11:48] Bootstrap tree #63, logLikelihood: -20032.184576
+[00:11:59] Bootstrap tree #64, logLikelihood: -20358.025693
+[00:12:08] Bootstrap tree #65, logLikelihood: -19862.835085
+[00:12:18] Bootstrap tree #66, logLikelihood: -20426.443417
+[00:12:28] Bootstrap tree #67, logLikelihood: -20024.322370
+[00:12:37] Bootstrap tree #68, logLikelihood: -19645.351819
+[00:12:46] Bootstrap tree #69, logLikelihood: -20443.682348
+[00:12:56] Bootstrap tree #70, logLikelihood: -20045.092038
+[00:13:06] Bootstrap tree #71, logLikelihood: -19904.775916
+[00:13:16] Bootstrap tree #72, logLikelihood: -20348.683840
+[00:13:27] Bootstrap tree #73, logLikelihood: -19132.459009
+[00:13:36] Bootstrap tree #74, logLikelihood: -19952.789280
+[00:13:48] Bootstrap tree #75, logLikelihood: -20373.985390
+[00:13:58] Bootstrap tree #76, logLikelihood: -19979.373188
+[00:14:11] Bootstrap tree #77, logLikelihood: -19806.815420
+[00:14:19] Bootstrap tree #78, logLikelihood: -19599.988667
+[00:14:29] Bootstrap tree #79, logLikelihood: -20650.975159
+[00:14:39] Bootstrap tree #80, logLikelihood: -19612.042870
+[00:14:49] Bootstrap tree #81, logLikelihood: -19868.815072
+[00:15:00] Bootstrap tree #82, logLikelihood: -19211.247419
+[00:15:09] Bootstrap tree #83, logLikelihood: -20465.129962
+[00:15:20] Bootstrap tree #84, logLikelihood: -19484.591980
+[00:15:29] Bootstrap tree #85, logLikelihood: -20653.448888
+[00:15:38] Bootstrap tree #86, logLikelihood: -20109.815152
+[00:15:50] Bootstrap tree #87, logLikelihood: -19482.755277
+[00:16:00] Bootstrap tree #88, logLikelihood: -20094.725609
+[00:16:12] Bootstrap tree #89, logLikelihood: -19038.443938
+[00:16:22] Bootstrap tree #90, logLikelihood: -19529.172813
+[00:16:32] Bootstrap tree #91, logLikelihood: -19656.787077
+[00:16:44] Bootstrap tree #92, logLikelihood: -19678.033941
+[00:16:55] Bootstrap tree #93, logLikelihood: -19728.173641
+[00:17:05] Bootstrap tree #94, logLikelihood: -19914.642682
+[00:17:17] Bootstrap tree #95, logLikelihood: -20354.632055
+[00:17:33] Bootstrap tree #96, logLikelihood: -19659.878206
+[00:17:50] Bootstrap tree #97, logLikelihood: -20062.280931
+[00:18:04] Bootstrap tree #98, logLikelihood: -20252.309380
+[00:18:16] Bootstrap tree #99, logLikelihood: -20177.286240
+[00:18:27] Bootstrap tree #100, logLikelihood: -19735.490698
+
+Optimized model parameters:
+
+   Partition 0: noname
+   Rate heterogeneity: GAMMA (4 cats, mean),  alpha: 0.438785 (ML),  weights&rates: (0.250000,0.022684) (0.250000,0.210090) (0.250000,0.770058) (0.250000,2.997169) 
+   Base frequencies (ML): 0.209177 0.295395 0.307544 0.187884 
+   Substitution rates (ML): 1.201894 4.111837 1.100793 0.829430 5.277384 1.000000 
+
+Final LogLikelihood: -19931.139168
+
+All ML trees saved to: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2.raxml.mlTrees
+Best ML tree saved to: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2.raxml.bestTree
+Best ML tree with bootstrap support values saved to: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2.raxml.support
+Optimized model saved to: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2.raxml.bestModel
+Bootstrap trees saved to: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2.raxml.bootstraps
+
+Execution log saved to: /mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection/genes/NFKB2/tree/NFKB2.raxml.log
+
+Analysis started: 21-Mar-2018 21:34:01 / finished: 21-Mar-2018 21:52:31
+
+Elapsed time: 1109.618 seconds
+

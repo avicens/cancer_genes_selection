@@ -1,0 +1,60 @@
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/Slr
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/codeml
+
+Running CodeML/Slr (2 CPUs)
+  - processing model M1 (M1~cff137fbc687f0b74b9ac77f02974700)
+  - processing model M2 (M2~6ff9ce593e64d9753d027aa9083b2e84)
+
+LRT
+
+                                         Null model |                             Alternative model | p-value
+   =================================================|===============================================|============
+                M1~cff137fbc687f0b74b9ac77f02974700 |           M2~6ff9ce593e64d9753d027aa9083b2e84 | 1.000000
+
+SUMMARY BY MODEL
+
+ - Model M1
+   * Average omega for all tree: 0.037
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+            1-   2   |   Relaxed (probability > 0.99)
+            4-   5   |   Relaxed (probability > 0.99)
+            7- 135   |   Relaxed (probability > 0.99)
+               136   |   Relaxed (probability > 0.95)
+          137- 152   |   Relaxed (probability > 0.99)
+               153   |   Relaxed (probability > 0.95)
+          154- 167   |   Relaxed (probability > 0.99)
+               168   |   Relaxed (probability > 0.95)
+          169- 180   |   Relaxed (probability > 0.99)
+          182- 188   |   Relaxed (probability > 0.99)
+               189   |   Relaxed (probability > 0.95)
+          190- 192   |   Relaxed (probability > 0.99)
+               193   |   Relaxed (probability > 0.95)
+          194- 207   |   Relaxed (probability > 0.99)
+          209- 223   |   Relaxed (probability > 0.99)
+               224   |   Relaxed (probability > 0.95)
+               225   |   Relaxed (probability > 0.99)
+          227- 229   |   Relaxed (probability > 0.99)
+          231- 670   |   Relaxed (probability > 0.99)
+               671   |   Relaxed (probability > 0.95)
+
+ - Model M2
+   * Average omega for all tree: 0.037
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+            1-   2   |   Conserved (probability > 0.99)
+            4-  16   |   Conserved (probability > 0.99)
+           18-  20   |   Conserved (probability > 0.99)
+                23   |   Conserved (probability > 0.99)
+           27- 135   |   Conserved (probability > 0.99)
+          137- 192   |   Conserved (probability > 0.99)
+               196   |   Conserved (probability > 0.99)
+          198- 200   |   Conserved (probability > 0.99)
+          203- 207   |   Conserved (probability > 0.99)
+               208   |   Conserved (probability > 0.95)
+          209- 225   |   Conserved (probability > 0.99)
+          227- 229   |   Conserved (probability > 0.99)
+               230   |   Conserved (probability > 0.95)
+          231- 670   |   Conserved (probability > 0.99)

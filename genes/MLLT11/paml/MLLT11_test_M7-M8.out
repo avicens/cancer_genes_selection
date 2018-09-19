@@ -1,0 +1,46 @@
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/Slr
+Using: /home/uvi/be/avs/tools/bin/ete3_apps/bin/codeml
+
+Running CodeML/Slr (3 CPUs)
+  - processing model M7 (M7~a18eff6aa8220112cbdce770d31a7dcc)
+  - processing model M8 (M8~264c2ea461d8dd1a3a0f1ca94e0f9220)
+  - processing model M8a (M8a~4d0aef6e7ca564623828fa8fa64f8c2f)
+
+LRT
+
+                                         Null model |                             Alternative model | p-value
+   =================================================|===============================================|============
+                M7~a18eff6aa8220112cbdce770d31a7dcc |           M8~264c2ea461d8dd1a3a0f1ca94e0f9220 | 0.021438*
+                M7~a18eff6aa8220112cbdce770d31a7dcc |          M8a~4d0aef6e7ca564623828fa8fa64f8c2f | 0.086101
+               M8a~4d0aef6e7ca564623828fa8fa64f8c2f |           M8~264c2ea461d8dd1a3a0f1ca94e0f9220 | 0.029480*
+
+SUMMARY BY MODEL
+
+ - Model M7
+   * Average omega for all tree: 0.223
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+                45   |   Relaxed (probability > 0.99)
+                49   |   Relaxed (probability > 0.95)
+                51   |   Relaxed (probability > 0.95)
+                53   |   Relaxed (probability > 0.95)
+                54   |   Relaxed (probability > 0.99)
+                60   |   Relaxed (probability > 0.95)
+                65   |   Relaxed (probability > 0.99)
+
+ - Model M8
+   * Average omega for all tree: 0.214
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+                45   |   Positively-selected (probability > 0.95)
+                73   |   Conserved (probability > 0.95)
+
+ - Model M8a
+   * Average omega for all tree: 0.197
+   * Sites significantly caracterized
+      codon position |   category
+     -----------------------------------------------------------
+                45   |   Relaxed (probability > 0.95)
+                60   |   Relaxed (probability > 0.95)
