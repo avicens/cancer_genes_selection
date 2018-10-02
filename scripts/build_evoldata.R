@@ -122,28 +122,45 @@ for (i in 1:length(genelist)){
 evoldata$PSS_M2<-pssM2
 evoldata$PSS_M8<-pssM8
 
+#Add variable with the number of PSSs corrected by sequence length
+evoldata$PSS_M2_length<-evoldata$PSS_M2/evoldata$seqlength
+evoldata$PSS_M8_length<-evoldata$PSS_M8/evoldata$seqlength
+
 #Add column to indicate genes identified under positive selection
-#by one of the LRTs
-PS<-character()
+#by M2 or M8
+PS1<-character()
 
 for (i in 1:nrow(evoldata)){
   g<-evoldata[i,c("padjM1M2","padjM8aM8")]
   if (g[1] < 0.01 | g[2] < 0.01) {
-    PS[i] = "Yes"
-  } else {PS[i] = "No"}
+    PS1[i] = "Yes"
+  } else {PS1[i] = "No"}
   }
 
-evoldata<-cbind(evoldata, PS)
+evoldata<-cbind(evoldata, PS1)
 
 #Add column to indicate genes identified under positive selection
-#by both LRTs
-robPS<-character()
+#by M2 and M8
+PS2<-character()
 
 for (i in 1:nrow(evoldata)){
   g<-evoldata[i,c("padjM1M2","padjM8aM8")]
   if (g[1] < 0.01 & g[2] < 0.01) {
-    robPS[i] = "Yes"
-  } else {robPS[i] = "No"}
+    PS2[i] = "Yes"
+  } else {PS2[i] = "No"}
 }
 
-evoldata<-cbind(evoldata,robPS)
+evoldata<-cbind(evoldata,PS2)
+
+#Add column to indicate genes identified under positive selection
+#by M2, M8 and BUSTED
+PS3<-character()
+
+for (i in 1:nrow(evoldata)){
+  g<-evoldata[i,c("padjM1M2","padjM8aM8","padjBusted")]
+  if (g[1] < 0.01 & g[2] < 0.01 & g[3] < 0.01) {
+    PS3[i] = "Yes"
+  } else {PS3[i] = "No"}
+}
+
+evoldata<-cbind(evoldata,PS3)
