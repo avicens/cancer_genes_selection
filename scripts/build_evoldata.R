@@ -17,8 +17,6 @@ nseqs[i]<-as.numeric(sapply(strsplit(myfile[4],split = " "),"[",4))
 seqlength[i]<-as.numeric(sapply(strsplit(myfile[4],split = " "),"[",8))
 }
 
-evoldata<-cbind(evoldata,nseqs,seqlength)
-
 #Add columns with global dN,dS and dN/dS ratio
 dN<-as.numeric()
 dS<-as.numeric()
@@ -33,22 +31,6 @@ for (i in 1:length(genelist)){
   dNdS[i]<-as.numeric(str_sub(grep("omega",myfile,value = T), start=-7))
 }
 
-evoldata<-cbind(evoldata,dN,dS,dNdS)
-
-#Discard genes with saturation of synonymous substitutions (dS > 15)
-evoldata<-evoldata[!(evoldata$dS > 15),]
-
-#Add the significance (p-value) from LRT of BUSTED analysis
-lrtBusted<-numeric()
-
-for (i in 1:length(genelist)) {
-  fileBusted<-readLines(paste(genedir,"/",genelist[i],"/hyphy/",genelist[i],"_busted.out",sep=""))
-  lrtBusted[i]<-as.numeric(sapply(strsplit(tail(fileBusted,1),split="\\*\\*"),"[",2) %>% 
-                             str_sub( .,start=-6))
-}
-
-padjBusted<-p.adjust(lrtBusted,method="fdr", n=length(lrtBusted)) #Correct p-value for multiple testing
-evoldata<-cbind(evoldata,padjBusted)
 
 #Add LRTs for test of variation amog sites (M0 vs M3 models in PAML)
 lhM0=as.numeric()
@@ -64,8 +46,6 @@ for (i in 1:length(genelist)){
 }
 
 lrtM0M3<-1-pchisq(2*(lhM3-lhM0),6) #Likelihood ratio test
-
-evoldata<-cbind(evoldata,lhM0,lhM3,lrtM0M3)
 
 #Add LRTs from the comparisons of PAML site-models
 ##M1 vs M2 test
@@ -85,8 +65,6 @@ for (i in 1:length(genelist)){
 lrtM1M2<-1-pchisq(2*(lhM2-lhM1),1) #Likelihood ratio test
 padjM1M2<-p.adjust(lrtM1M2,method="fdr", n=length(lrtM1M2)) #Correct p-value for multiple testing
 
-evoldata<-cbind(evoldata,lhM1,lhM2,lrtM1M2,padjM1M2)
-
 ##M8 vs M8a test
 lhM8=as.numeric()
 lhM8a=as.numeric()
@@ -105,62 +83,35 @@ for (i in 1:length(genelist)){
 lrtM8aM8<-1-pchisq(2*(lhM8-lhM8a),1) #Likelihood ratio test
 padjM8aM8<-p.adjust(lrtM8aM8,method="fdr", n=length(lrtM8aM8)) #Correct p-value for multiple testing
 
-evoldata<-cbind(evoldata,lhM8a,lhM8,lrtM8aM8, padjM8aM8)
-
 #Number of sites under positive selection
 pssM2<-as.numeric()
 pssM8<-as.numeric()
+ 
+ for (i in 1:length(genelist)){
+   myfile_lrtM2<-readLines(paste(genedir,"/",genelist[i],"/paml/",genelist[i],"_test_M1-M2.out",sep=""))
+   pssM2[i]<-length(grep("selected",myfile_lrtM2))
+   
+   myfile_lrtM8<-readLines(paste(genedir,"/",genelist[i],"/paml/",genelist[i],"_test_M7-M8.out",sep=""))
+   pssM8[i]<-length(grep("selected",myfile_lrtM8))
+ }
 
-for (i in 1:length(genelist)){
-  myfile_lrtM2<-readLines(paste(genedir,"/",genelist[i],"/paml/",genelist[i],"_test_M1-M2.out",sep=""))
-  pssM2[i]<-length(grep("selected",myfile_lrtM2))
-  
-  myfile_lrtM8<-readLines(paste(genedir,"/",genelist[i],"/paml/",genelist[i],"_test_M7-M8.out",sep=""))
-  pssM8[i]<-length(grep("selected",myfile_lrtM8))
+#Add the significance (p-value) from LRT of BUSTED analysis
+lrtBusted<-numeric()
+
+for (i in 1:length(genelist)) {
+  fileBusted<-readLines(paste(genedir,"/",genelist[i],"/hyphy/",genelist[i],"_busted.out",sep=""))
+  lrtBusted[i]<-as.numeric(sapply(strsplit(tail(fileBusted,1),split="\\*\\*"),"[",2) %>% 
+                             str_sub( .,start=-6))
 }
 
-evoldata$PSS_M2<-pssM2
-evoldata$PSS_M8<-pssM8
+padjBusted<-p.adjust(lrtBusted,method="fdr", n=length(lrtBusted)) #Correct p-value for multiple testing
 
-#Add variable with the number of PSSs corrected by sequence length
-evoldata$PSS_M2_length<-evoldata$PSS_M2/evoldata$seqlength
-evoldata$PSS_M8_length<-evoldata$PSS_M8/evoldata$seqlength
+PS_Busted<-padjBusted< 0.01
+PS_Busted<-gsub(TRUE, "Yes",PS_Busted)
+PS_Busted<-gsub(FALSE, "No",PS_Busted)
 
-#Add column to indicate genes identified under positive selection
-#by M2 or M8
-PS1<-character()
-
-for (i in 1:nrow(evoldata)){
-  g<-evoldata[i,c("padjM1M2","padjM8aM8")]
-  if (g[1] < 0.01 | g[2] < 0.01) {
-    PS1[i] = "Yes"
-  } else {PS1[i] = "No"}
-  }
-
-evoldata<-cbind(evoldata, PS1)
-
-#Add column to indicate genes identified under positive selection
-#by M2 and M8
-PS2<-character()
-
-for (i in 1:nrow(evoldata)){
-  g<-evoldata[i,c("padjM1M2","padjM8aM8")]
-  if (g[1] < 0.01 & g[2] < 0.01) {
-    PS2[i] = "Yes"
-  } else {PS2[i] = "No"}
-}
-
-evoldata<-cbind(evoldata,PS2)
-
-#Add column to indicate genes identified under positive selection
-#by M2, M8 and BUSTED
-PS3<-character()
-
-for (i in 1:nrow(evoldata)){
-  g<-evoldata[i,c("padjM1M2","padjM8aM8","padjBusted")]
-  if (g[1] < 0.01 & g[2] < 0.01 & g[3] < 0.01) {
-    PS3[i] = "Yes"
-  } else {PS3[i] = "No"}
-}
-
-evoldata<-cbind(evoldata,PS3)
+#Conacatenate data
+evoldata<-cbind(evoldata,nseqs,seqlength,dN,dS,dNdS,
+                lhM1,lhM2,lrtM1M2,padjM1M2,
+                lhM8a,lhM8,lrtM8aM8, padjM8aM8, pssM2, pssM8,
+                lrtBusted,padjBusted)
