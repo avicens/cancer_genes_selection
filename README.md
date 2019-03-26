@@ -1,6 +1,6 @@
 # Positive Selection of Cancer Genes
 ## Description
-In this repository I describe the workflow followed to process and analyze the data of the study "Positive selection of Cancer Associated Genes in Mammals" *(manuscript in preparation)*.
+In this repository I describe the workflow followed to process and analyze the data of the study "Selective pressures on human cancer genes along the evolution of mammals" (Genes 2018, 9(12), 582; https://doi.org/10.3390/genes9120582).
 
 ## Repository content
 The repository contains the scripts written to perform the computational tasks of this study, as well as the input files required as input in some steps.
