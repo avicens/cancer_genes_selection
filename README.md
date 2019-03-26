@@ -17,12 +17,9 @@ The dataset was cleaned in order to be used for later analysis with the R script
 The variables included in the dataset are:
 
 * Mutation type (Somatic/Germline)
-* Tumor type (Somatic/Germline)
-* Syndrome
+* Inheritance (Dominant/Recessive)
+* Cancer role 
 * Tissue type
-* Inheritance
-* Cancer role
-* Chromosome type (X/Autosome)
 
 
 ### Retrieving human protein annotations
