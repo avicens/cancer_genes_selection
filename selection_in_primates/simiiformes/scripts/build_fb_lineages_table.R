@@ -29,7 +29,8 @@ build.lrt.table<- function(sample) {
     lh.fb<-sapply(strsplit(lrt.m0fb,"\\|"),"[",2)
     nodes<-as.integer(sapply(strsplit(lh.fb,"\\.|-"),"[",2))
     p.val<-sapply(strsplit(lrt.m0fb,"\\|"),"[",3); p.val<-as.numeric(gsub(" |\\*","",p.val))
-    lrt.df<-data.frame(Node = nodes, LRT = p.val)
+    p.adj<-p.adjust(p.val, n=length(p.val),method="fdr") 
+    lrt.df<-data.frame(Node = nodes, LRT = p.val, P.adj = p.adj)
 
 
     return(lrt.df)
@@ -61,19 +62,20 @@ samples.list<-list.files("data/paml/", recursive=T, pattern="fb_primates_leaves.
 #samples<-sapply(strsplit(samples.list,"/"),"[",1)
 samples<-read.table("genelists/cancer_genes_signif_human_dnds_EOGid.txt",header=F,stringsAsFactors=F)[,1]
 
-signif.fb.df<-data.frame(Node=integer(), Species=character(), Id=character(), LRT = numeric(), Bg.omega = numeric(), Fg.omega = numeric())
+fb.df<-data.frame(Node=integer(), Species=character(), Id=character(), LRT = numeric(), P.adj = numeric(),Bg.omega = numeric(), Fg.omega = numeric(),Group=character())
+
 for (smp in samples) {
-
-
+    cat("Attaching data for group",smp,"\n")
+    
     smp.nodes<-build.node.table(smp)
     smp.lrt<-build.lrt.table(smp)
     smp.rates<-build.rates.table(smp)
 
     smp.df<-Reduce(function(x,y) merge(x,y),list(smp.nodes, smp.lrt, smp.rates))
 
-    smp.df$Group<-rep(sample,nrow(smp.df))
-    signif.fb<-smp.df %>% filter(Bg.omega < Fg.omega) %>% filter(LRT < 0.05)
-    signif.fb.df<-rbind(signif.fb)
+    smp.df$Group<-rep(smp,nrow(smp.df))
+
+    fb.df<-rbind(smp.df)
 
 }
 
