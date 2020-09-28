@@ -18,4 +18,4 @@ mkdir ${GENEDIR}/${gene}/tree
 module load gcc/5.3.0 openmpi/1.10.2 raxml-ng/0.5.1b
 
 echo "Building tree for ${gene}"
-raxml-ng-mpi --all --msa ${GENEDIR}/${gene}/align/${gene}_align_DNA_trimmed2.fasta --model GTR+G -tree pars{10} --bs-trees 100 --prefix ${GENEDIR}/${gene}/tree/${gene}_trimmed --redo
+raxml-ng-mpi --all --msa ${GENEDIR}/${gene}/align/${gene}_align_DNA_trimmed.fasta --model GTR+G -tree pars{10} --bs-trees 100 --prefix ${GENEDIR}/${gene}/tree/${gene} --redo
