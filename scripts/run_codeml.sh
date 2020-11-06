@@ -8,14 +8,14 @@
 #SBATCH --mem 6G
 
 #Setting directories and files
-WORKDIR="/mnt/lustre/scratch/home/uvi/be/avs/cancer_genes_selection"
+WORKDIR="/home/uvi/be/avs/store/cancer_genes_selection"
 GENEDIR="${WORKDIR}/genes"
 
 gene=`ls ${GENEDIR} | sed "${SLURM_ARRAY_TASK_ID}q;d"`
-mkdir ${GENEDIR}/${gene}/paml
+mkdir -p ${GENEDIR}/${gene}/paml
 
-module load miniconda
-source activate /home/uvi/be/avs/tools/miniconda_avs
+module load miniconda3
+conda activate avicens2.7
 
 echo "Running Codeml for ${gene}"
 ete3 evol -t ${GENEDIR}/${gene}/tree/${gene}_trimmed.raxml.bestTree --alg ${GENEDIR}/${gene}/align/${gene}_align_DNA_trimmed2.fasta 
